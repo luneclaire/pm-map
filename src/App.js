@@ -1,24 +1,33 @@
-import logo from './logo.svg';
 import './App.css';
+import { Layout } from 'antd';
+import { Info } from './Info';
+import { PmData } from './PmData';
+import { SelectDay } from './SelectDay';
+import { Map } from './Map';
+import { SearchBar } from './SearchBar';
 
 function App() {
+  const { Header, Footer, Sider, Content } = Layout;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout className="pm-app">
+      <Header>
+        <p className="title">미세먼지 지도</p>
+      </Header>
+      <Layout>
+        <Sider width={600} className="maparea">
+          <SelectDay/>
+          <Map/>
+        </Sider>
+        <Content className="pmdataarea">
+          <SearchBar/>
+          <PmData/>
+        </Content>
+      </Layout>
+      <Footer>
+        <Info/>
+      </Footer>
+    </Layout>
   );
 }
 
