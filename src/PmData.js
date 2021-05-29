@@ -5,14 +5,14 @@ export function PmData() {
 		console.log(`radio checked:${e.target.value}`);
 	}
 
+	const addr = '서울특별시'
+	{/*표기할 주소 받아오기*/}
+	const pm = 40
+	{/*미세/초미세에 따른 값 변화 + 지역에 따른 값 변화 동시에 처리*/}
 	return (
 		<div className="databox">
-			<Radio.Group onChange={onChange} defaultValue="pm" size="large" style={{margin: '5px'}}>
-				<Radio.Button value="pm">미세먼지</Radio.Button>
-				<Radio.Button value="fpm">초미세먼지</Radio.Button>
-    	</Radio.Group>
-			<h1 style={{margin: '15px'}}>서울특별시</h1>
-			<p style={{fontSize: 'xx-large', margin: '15px'}}>40</p>
+			<h1 style={{margin: '15px'}}>{addr}</h1>
+			<p style={{fontSize: 'xx-large', margin: '15px'}}>{pm}</p>
 		</div>
 	);
 }
