@@ -30,6 +30,9 @@ export function Map(props) {
 
   const pmOrFpm = props.pmSwitch ? "pm" : "fpm"
 
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [hoverInfo, setHoverInfo] = useState(null);
+
   //geojson에 미세먼지 수치 추가 (위 mock data 활용)
   const updatedData = {
     type: 'FeatureCollection',
@@ -61,7 +64,7 @@ export function Map(props) {
       latitude: event.lngLat[1],
       zoom: 7,
     });
-    console.log(event)
+    setIsZoomed(true)
   }
 
   //초기 줌 수치로 돌아오기
@@ -72,14 +75,33 @@ export function Map(props) {
       longitude: 127.935763,
       zoom: 5.9,
     });
+    setIsZoomed(false)
   }
 
+  const onHover = useCallback(event => {
+    const {
+      features,
+      srcEvent: {offsetX, offsetY}
+    } = event;
+    const hoveredFeature = features && features[0];
+
+    setHoverInfo(
+      hoveredFeature ? {
+        features: hoveredFeature,
+        x: offsetX,
+        y: offsetY
+      }
+      : null
+    )
+  }, [])
+  
   return (
     <div>
       <ReactMapGL
         {...viewport}
         mapStyle="mapbox://styles/mapbox/light-v9"
         mapboxApiAccessToken={MAP_TOKEN}
+        onHover={onHover}
         onClick={zoomToClicked}
       >
         <Source type="geojson" data={updatedData}>
@@ -101,6 +123,11 @@ export function Map(props) {
           },"fill-opacity": 0.4}}
         />
         </Source>
+        {hoverInfo && !isZoomed && (
+          <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
+            {hoverInfo.features.properties.sidonm}
+          </div>
+        )}
       </ReactMapGL>
       <Button
         type="primary"
