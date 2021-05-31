@@ -19,7 +19,7 @@ const findSido = (year, month, date, hour, callback) => {
     }
 
     // DB에서 dateTime이 현재 시각과 가장 가까운 데이터 가져오기
-    Sido.find({dateTime: dateTime}, function(error,sido){
+    Sido.find({"dateTime": dateTime}, function(error,sido){
         if(error){
             console.log(error);
         }else{
@@ -27,10 +27,8 @@ const findSido = (year, month, date, hour, callback) => {
                 callback({
                     sido:sido
                 });
-            }else{ // 최신 데이터로 업데이트
-                GetsidoAirdata(sido.length===0);
-                console.log('updated');
-                findSido(year, month, date, hour, callback);
+            }else{ // 1시간 전 데이터 호출
+                findSido(year, month, date, hour-1, callback);
             }
         }
     });
