@@ -21,7 +21,6 @@ function App() {
         </Sider>
         <Content className="pmdataarea">
           <SearchBar/>
-          <PmData/>
         </Content>
       </Layout>
       <Footer>
