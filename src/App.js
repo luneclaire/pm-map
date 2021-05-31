@@ -33,7 +33,7 @@ function App() {
       <Layout>
         <Sider width={600} className="maparea">
           <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
-          <Map/>
+          <Map pmSwitch = {pmSwitch}/>
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
