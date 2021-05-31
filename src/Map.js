@@ -8,6 +8,40 @@ import { ZoomOutOutlined } from '@ant-design/icons';
 export function Map() {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
 
+  const MOCK_DATA = [
+    {sidonm: "서울특별시", pm: 40},
+    {sidonm: "부산광역시", pm: 3},
+    {sidonm: "대구광역시", pm: 11},
+    {sidonm: "인천광역시", pm: 20},
+    {sidonm: "광주광역시", pm: 50},
+    {sidonm: "대전광역시", pm: 90},
+    {sidonm: "울산광역시", pm: 150},
+    {sidonm: "세종특별자치시", pm: 60},
+    {sidonm: "경기도", pm: 40},
+    {sidonm: "강원도", pm: 35},
+    {sidonm: "충청북도", pm: 20},
+    {sidonm: "충청남도", pm: 110},
+    {sidonm: "전라북도", pm: 140},
+    {sidonm: "전라남도", pm: 90},
+    {sidonm: "경상북도", pm: 80},
+    {sidonm: "경상남도", pm: 70},
+    {sidonm: "제주특별자치도", pm: 50}
+  ]
+
+  //geojson에 미세먼지 수치 추가 (위 mock data 활용)
+  const updatedData = {
+    type: 'FeatureCollection',
+    features: data.features.map(x => {
+      const pmVal = MOCK_DATA.filter( md => { return md.sidonm === x.properties.sidonm} )
+      const properties = {
+        ...x.properties,
+        pm: (pmVal[0].pm)*(7/160) //0-6 scale로 표현해야 하기 때문에 미세먼지 max수치를 약 160으로 잡고, 7 * 160을 곱해 계산
+      };
+      return {...x, properties};
+    }) 
+  }
+
+  //초기 viewport setting
   const [ viewport, setViewport ] = useState({
     latitude: 35.905546,
     longitude: 127.935763,
@@ -16,15 +50,18 @@ export function Map() {
     zoom: 5.9
     });
 
-  const zoomToClicked = useCallback(event => {
+  //지도에 클릭한 좌표로 한 단계 줌 인 (고정 줌 수치)
+  const zoomToClicked = (event) => {
     setViewport({
       ...viewport,
       longitude: event.lngLat[0],
       latitude: event.lngLat[1],
       zoom: 7,
     });
-  }, []);
+    console.log(event)
+  }
 
+  //초기 줌 수치로 돌아오기
   const zoomOut = () => {
     setViewport({
       ...viewport,
@@ -33,7 +70,7 @@ export function Map() {
       zoom: 5.9,
     });
   }
-  
+
   return (
     <div>
       <ReactMapGL
@@ -42,17 +79,24 @@ export function Map() {
         mapboxApiAccessToken={MAP_TOKEN}
         onClick={zoomToClicked}
       >
-        <Source
-          id="korea"
-          type="geojson"
-          data={data}
-        />
-        <Layer
-          id="aa"
-          type="fill"
-          source="korea"
-          paint={{"fill-color": "#b83132", "fill-opacity": 0.4}}
-        />
+        <Source type="geojson" data={updatedData}>
+          <Layer
+            id="data"
+            type="fill"
+            paint={{'fill-color': {
+              property: 'pm',
+              stops: [
+                [0, '#1C3FFD'], //파랑
+                [1, '#0080c5'], //하늘
+                [2, '#168039'], //초록
+                [3, '#87ae22'], //연두
+                [4, '#FFD10F'], //노랑
+                [5, '#f48000'], //주황
+                [6, '#D90000'], //빨강
+              ]
+            },"fill-opacity": 0.4}}
+          />
+        </Source>
       </ReactMapGL>
       <Button
         type="primary"
