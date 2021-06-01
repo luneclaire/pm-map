@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import data from './Sido';
+import sggData from './SGGNew';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
@@ -29,18 +30,30 @@ export function Map(props) {
     {sidonm: "제주특별자치도", pm: 50, fpm: 60}
   ]
 
+  const SGG_MOCK_DATA = [
+    {sidonm: "서울특별시", sggnm: "종로구", pm: 40, fpm: 32},
+    {sidonm: "서울특별시", sggnm: "강남구", pm: 20, fpm: 10},
+    {sidonm: "서울특별시", sggnm: "동대문구", pm: 80, fpm: 52},
+    {sidonm: "서울특별시", sggnm: "성북구", pm: 140, fpm: 92},
+    {sidonm: "경기도", sggnm: "성남시", pm: 140, fpm: 92},
+    {sidonm: "경기도", sggnm: "안산시", pm: 40, fpm: 72},
+    {sidonm: "경기도", sggnm: "안양시", pm: 70, fpm: 39},
+    {sidonm: "경기도", sggnm: "수원시", pm: 5, fpm: 2}
+  ]
+
   const pmOrFpm = props.pmSwitch ? "pm" : "fpm"
 
   const gradient = {
     property: pmOrFpm,
     stops: [
-      [0, '#1C3FFD'], //파랑
-      [1, '#0080c5'], //하늘
-      [2, '#168039'], //초록
-      [3, '#87ae22'], //연두
-      [4, '#FFD10F'], //노랑
-      [5, '#f48000'], //주황
-      [6, '#D90000'], //빨강
+      [0, '#565656'], //미세먼지 수치가 주어지지 않았을 때 회색
+      [1, '#1C3FFD'], //파랑
+      [2, '#0080c5'], //하늘
+      [3, '#168039'], //초록
+      [4, '#87ae22'], //연두
+      [5, '#FFD10F'], //노랑
+      [6, '#f48000'], //주황
+      [7, '#D90000'], //빨강
     ]
 }
 
@@ -55,9 +68,29 @@ export function Map(props) {
       const thisSido = MOCK_DATA.filter( md => { return md.sidonm === x.properties.sidonm} )
       const properties = {
         ...x.properties,
-        pm: (thisSido[0].pm)*(7/160), //0-6 scale로 표현해야 하기 때문에 미세먼지 max수치를 약 160으로 잡고, 7 / 160을 곱해 계산
-        fpm: (thisSido[0].fpm)*(7/100) //0-6 scale, 초미세먼지 max 수치는 100으로 잡고 7 / 100을 곱해 계산
+        pm: (thisSido[0].pm)*(7/160)+1, //0-6 scale로 표현해야 하기 때문에 미세먼지 max수치를 약 160으로 잡고, 7 / 160을 곱해 계산
+        fpm: (thisSido[0].fpm)*(7/100)+1 //0-6 scale, 초미세먼지 max 수치는 100으로 잡고 7 / 100을 곱해 계산
       };
+      return {...x, properties};
+    }) 
+  }
+
+  const updatedSGGData = {
+    type: 'FeatureCollection',
+    features: sggData.features.map(x => {
+      const thisSGG = SGG_MOCK_DATA.filter( md => {
+        const sggSplit = x.properties.sgg_nm.split(' ')
+        return md.sggnm === sggSplit[1]
+        } )
+
+      const properties = (typeof thisSGG[0] != "undefined") ? {
+          ...x.properties,
+          sidonm: (thisSGG[0].sidonm),
+          onlySGG: (thisSGG[0].sggnm),
+          pm: (thisSGG[0].pm)*(7/160), //0-6 scale로 표현해야 하기 때문에 미세먼지 max수치를 약 160으로 잡고, 7 / 160을 곱해 계산
+          fpm: (thisSGG[0].fpm)*(7/100) //0-6 scale, 초미세먼지 max 수치는 100으로 잡고 7 / 100을 곱해 계산
+      } : { ...x.properties, sidonm: "undefined Sido", pm: -1, fpm: -1}
+
       return {...x, properties};
     }) 
   }
@@ -71,8 +104,8 @@ export function Map(props) {
     zoom: 5.9,
     });
 
-  //지도에 클릭한 좌표로 한 단계 줌 인 (고정 줌 수치)
-  const zoomToClicked = (event) => {
+  //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
+  const onClick = (event) => {
     console.log(event)
     const feature = event.features ? event.features[0] : null
     if (!selectedSido && feature) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
@@ -100,7 +133,7 @@ export function Map(props) {
       setIsZoomed(true)
       setSelectedSido(event.features[0].properties.sidonm)
       props.changeAddr(event.features[0].properties.sidonm)
-    }
+    } else if (feature) { props.changeAddr(event.features[0].properties.sgg_nm)}
   }
 
   //초기 줌 수치로 돌아오기
@@ -140,10 +173,10 @@ export function Map(props) {
         mapStyle="mapbox://styles/mapbox/light-v9"
         mapboxApiAccessToken={MAP_TOKEN}
         onHover={onHover}
-        onClick={zoomToClicked}
+        onClick={onClick}
         onViewportChange={v => setViewport(v)}
       >
-        <Source type="geojson" data={updatedData}>
+        <Source type="geojson" data={selectedSido ? updatedSGGData : updatedData }>
           { !selectedSido ?
           <Layer
             id="data"
@@ -161,9 +194,9 @@ export function Map(props) {
           />
           }
         </Source>
-        {hoverInfo && !isZoomed && (
+        {hoverInfo && (
           <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
-            {hoverInfo.features.properties.sidonm}
+            {isZoomed ? hoverInfo.features.properties.onlySGG  : hoverInfo.features.properties.sidonm }
           </div>
         )}
       </ReactMapGL>
