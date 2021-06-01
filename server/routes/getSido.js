@@ -1,9 +1,17 @@
 const Sido = require("../models/sido");
 const axios = require('axios');
 
-// const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK7Is0Wud7kLs4WyEzTcRTl3Esbxbg%3D%3D';
-const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D';
+const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK7Is0Wud7kLs4WyEzTcRTl3Esbxbg%3D%3D';
+// const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D';
 // const serviceKey = 'dC0Mal22V6WU0%2BFhs1pxRYGtxCk3gyIU84PpYDzSQJgl1A86QtlR5iPgjNHnNMPjEn55t7YbHljqayKmwclVlg%3D%3Ds';
+
+const regionNameData = require("./regionNameMapping.json");
+const nameMapping = async (sidoName)=>{
+    const result = regionNameData.filter(({name, abbrev})=>{
+        return abbrev === sidoName
+    });
+    return result[0].name
+}
 
 async function requestApi(sidoName){
     const url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?';
@@ -45,10 +53,10 @@ async function getSidoData(sidoName){
     }
 
     const data = {
-        sidoName: sidoName, // 시도 이름
         dateTime: dateTime, // 측정시간
-        pm10Value: Math.round(pm10Sum/sidoLength), // 해당 지역의 평균 미세먼지 수치
-        pm25Value: Math.round(pm25Sum/sidoLength), // 해당 지역의 평균 초미세먼지 수치
+        sidonm: await nameMapping(sidoName), // 시도 이름
+        pm: Math.round(pm10Sum/sidoLength), // 해당 지역의 평균 미세먼지 수치
+        fpm: Math.round(pm25Sum/sidoLength), // 해당 지역의 평균 초미세먼지 수치
     }
     return data
 }
@@ -56,17 +64,17 @@ async function getSidoData(sidoName){
 
 function updateDB(data){
     const query = {
-        "sidoName": data.sidoName,
+        "sidonm": data.sidonm,
         "dateTime": data.dateTime
     };
     const update = {
-        "$set":{"pm10Value": data.pm10Value,
-                "pm25Value": data.pm25Value}
+        "$set":{"pm": data.pm,
+                "fpm": data.fpm}
     };
     const options = { "upsert": true };
 
     Sido.updateOne(query, update, options)
-    .then(()=>console.log(data.sidoName, 'upserted!')) 
+    .then(()=>console.log(data.sidonm, 'upserted!')) 
 }
 
 
