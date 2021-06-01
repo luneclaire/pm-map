@@ -5,9 +5,9 @@ const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK
 // const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D';
 // const serviceKey = 'dC0Mal22V6WU0%2BFhs1pxRYGtxCk3gyIU84PpYDzSQJgl1A86QtlR5iPgjNHnNMPjEn55t7YbHljqayKmwclVlg%3D%3Ds';
 
-const regionNameData = require("./regionNameMapping.json");
+const sidoNameData = require("./sidoNameMapping.json");
 const nameMapping = async (sidoName)=>{
-    const result = regionNameData.filter(({name, abbrev})=>{
+    const result = sidoNameData.filter(({name, abbrev})=>{
         return abbrev === sidoName
     });
     return result[0].name
