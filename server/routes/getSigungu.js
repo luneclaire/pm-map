@@ -3,8 +3,8 @@ const axios = require('axios');
 
 const Sigungu = require("../models/sigungu");
 
-const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK7Is0Wud7kLs4WyEzTcRTl3Esbxbg%3D%3D';
-// const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D';
+// const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK7Is0Wud7kLs4WyEzTcRTl3Esbxbg%3D%3D';
+const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D';
 
 async function requestApi(stationName) {
     const url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?';
@@ -46,20 +46,20 @@ async function getData(sidonm, sigungunm, stationNames) {
             dateTime = air.dataTime;
             pm10Sum += Number(pm10Value);
             pm25Sum += Number(pm25Value);
-            const data = {
-                dateTime: dateTime, // 측정시간
-                sidonm: sidonm, // 시군구 이름
-                sigungunm: sigungunm, // 시군구 이름
-                pm: Math.round(pm10Sum / sidoLength), // 해당 지역의 평균 미세먼지 수치
-                fpm: Math.round(pm25Sum / sidoLength), // 해당 지역의 평균 초미세먼지 수치
-            }
-            return data
+
         } catch (e) {
             // console.error(e);
             console.log(sidonm, stationName, '통신장애');
         }
     }
-
+    const data = {
+        dateTime: dateTime, // 측정시간
+        sidonm: sidonm, // 시군구 이름
+        sigungunm: sigungunm, // 시군구 이름
+        pm: Math.round(pm10Sum / sidoLength), // 해당 지역의 평균 미세먼지 수치
+        fpm: Math.round(pm25Sum / sidoLength), // 해당 지역의 평균 초미세먼지 수치
+    }
+    return data
 }
 
 function updateDB(data) {
@@ -76,7 +76,13 @@ function updateDB(data) {
     };
     const options = { "upsert": true };
 
-    Sigungu.updateOne(query, update, options);
+    Sigungu.updateOne(query, update, options)
+    .then(()=>{
+        console.log(data.sigungunm, 'sigungu updated')
+    })
+    .catch((e)=>{
+        console.error(e)
+    });
 }
 
 async function getAllSiGunGuData() {
