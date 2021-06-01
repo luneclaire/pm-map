@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import ReactMapGL, { Layer, Source } from 'react-map-gl';
+import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import data from './Sido';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
+import bbox from '@turf/bbox'
 
 export function Map(props) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
@@ -30,8 +31,22 @@ export function Map(props) {
 
   const pmOrFpm = props.pmSwitch ? "pm" : "fpm"
 
+  const gradient = {
+    property: pmOrFpm,
+    stops: [
+      [0, '#1C3FFD'], //파랑
+      [1, '#0080c5'], //하늘
+      [2, '#168039'], //초록
+      [3, '#87ae22'], //연두
+      [4, '#FFD10F'], //노랑
+      [5, '#f48000'], //주황
+      [6, '#D90000'], //빨강
+    ]
+}
+
   const [isZoomed, setIsZoomed] = useState(false);
   const [hoverInfo, setHoverInfo] = useState(null);
+  const [selectedSido, setSelectedSido] = useState(null);
 
   //geojson에 미세먼지 수치 추가 (위 mock data 활용)
   const updatedData = {
@@ -53,18 +68,39 @@ export function Map(props) {
     longitude: 127.935763,
     width: '500px',
     height: '600px',
-    zoom: 5.9
+    zoom: 5.9,
     });
 
   //지도에 클릭한 좌표로 한 단계 줌 인 (고정 줌 수치)
   const zoomToClicked = (event) => {
-    setViewport({
-      ...viewport,
-      longitude: event.lngLat[0],
-      latitude: event.lngLat[1],
-      zoom: 7,
-    });
-    setIsZoomed(true)
+    console.log(event)
+    const feature = event.features ? event.features[0] : null
+    if (!selectedSido && feature) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
+      const [minLng, minLat, maxLng, maxLat] = bbox(feature);
+      const vp = new WebMercatorViewport(viewport);
+      const {longitude, latitude, zoom} = vp.fitBounds(
+        [
+          [minLng, minLat],
+          [maxLng, maxLat]
+        ],
+        { padding: 40 }
+      );
+
+      setViewport({
+        ...viewport,
+        longitude,
+        latitude,
+        zoom,
+        transitionInterpolator: new LinearInterpolator({
+          around: [event.offsetCenter.x, event.offsetCenter.y]
+        }),
+        transitionDuration: 500
+      })
+
+      setIsZoomed(true)
+      setSelectedSido(event.features[0].properties.sidonm)
+      props.changeAddr(event.features[0].properties.sidonm)
+    }
   }
 
   //초기 줌 수치로 돌아오기
@@ -76,6 +112,8 @@ export function Map(props) {
       zoom: 5.9,
     });
     setIsZoomed(false)
+    setSelectedSido(null)
+    props.changeAddr(null)
   }
 
   const onHover = useCallback(event => {
@@ -103,25 +141,25 @@ export function Map(props) {
         mapboxApiAccessToken={MAP_TOKEN}
         onHover={onHover}
         onClick={zoomToClicked}
+        onViewportChange={v => setViewport(v)}
       >
         <Source type="geojson" data={updatedData}>
+          { !selectedSido ?
           <Layer
-          id="data"
-          type="fill"
-          paint={
-            {'fill-color': {
-              property: pmOrFpm,
-              stops: [
-                [0, '#1C3FFD'], //파랑
-                [1, '#0080c5'], //하늘
-                [2, '#168039'], //초록
-                [3, '#87ae22'], //연두
-                [4, '#FFD10F'], //노랑
-                [5, '#f48000'], //주황
-                [6, '#D90000'], //빨강
-              ]
-          },"fill-opacity": 0.4}}
-        />
+            id="data"
+            type="fill"
+            paint={
+              {'fill-color': gradient, "fill-opacity": 0.4}}
+          />
+          :
+          <Layer
+            id="data"
+            type="fill"
+            paint={
+              {'fill-color': gradient, "fill-opacity": 0.4}}
+            filter={['==', 'sidonm', selectedSido]}
+          />
+          }
         </Source>
         {hoverInfo && !isZoomed && (
           <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
