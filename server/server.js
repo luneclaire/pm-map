@@ -1,7 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const schedule = require('node-schedule');
-const { GetsidoAirdata } = require("./routes/getSido");
+const { getAllSidoData } = require("./routes/getSido");
 
 const fs = require('fs')
 var text = fs.readFileSync("./server/dbconnection.txt").toString('utf-8');
@@ -20,16 +20,13 @@ connection.once('open', function callback () {
 	connection.db.listCollections().toArray(function (err, names) {
     if (err) {
       console.log(err);
-    } else {
-      GetsidoAirdata((names.length === 0)); 
-      console.log("updated");
     }
   });
 });
 
 // xx시 10분에 DB업데이트 
 var j = schedule.scheduleJob('0 10 * * * *', function(){ 
-  GetsidoAirdata(false);
+  getAllSidoData();
 });
 
 const api = require('./routes/index');
