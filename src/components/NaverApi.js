@@ -20,7 +20,7 @@ request.get({
   }, function(err, res, body) {
     let json = JSON.parse(body) //json으로 파싱 
     console.log(json)
-    fs.writeFile("News.json", JSON.stringify(json, null, 2), function(err){
+    fs.writeFile("NewsList.json", JSON.stringify(json, null, 2), function(err){
       if(err){
         console.log(err);
       }
