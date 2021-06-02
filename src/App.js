@@ -5,6 +5,7 @@ import { PmData } from './PmData';
 import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
+import { News } from './News';
 import React, { useState, Component } from 'react';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
           <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
+          <News/>
         </Content>
       </Layout>
       <Footer>
