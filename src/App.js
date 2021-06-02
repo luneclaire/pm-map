@@ -39,7 +39,7 @@ function App() {
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
           <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
-          <News/>
+          <News className="newsarea"/>
         </Content>
       </Layout>
       <Footer>
