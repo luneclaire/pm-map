@@ -1,7 +1,9 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const schedule = require('node-schedule');
+
 const { getAllSidoData } = require("./routes/getSido");
+const { getAllSiGunGuData } = require("./routes/getSigungu");
 
 const fs = require('fs')
 var text = fs.readFileSync("./server/dbconnection.txt").toString('utf-8');
@@ -27,10 +29,11 @@ connection.once('open', function callback () {
 // xx시 10분에 DB업데이트 
 var j = schedule.scheduleJob('0 10 * * * *', function(){ 
   getAllSidoData();
+  getAllSiGunGuData();
 });
 
 const api = require('./routes/index');
-app.use('/api', api);
+app.use('/', api);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

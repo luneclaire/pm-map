@@ -74,7 +74,7 @@ function updateDB(data){
     const options = { "upsert": true };
 
     Sido.updateOne(query, update, options)
-    .then(()=>console.log(data.sidonm, 'upserted!')) 
+    .then(()=>console.log(data.sidonm, 'sido upserted!')) 
 }
 
 
