@@ -16,13 +16,10 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     property: pmOrFpm,
     stops: [
       [0, '#565656'], //미세먼지 수치가 주어지지 않았을 때 회색
-      [1, '#1C3FFD'], //파랑
-      [2, '#0080c5'], //하늘
-      [3, '#168039'], //초록
-      [4, '#87ae22'], //연두
-      [5, '#FFD10F'], //노랑
-      [6, '#f48000'], //주황
-      [7, '#D90000'], //빨강
+      [1, '#1C3FFD'], [2, '#1C3FFD'], [3, '#1C3FFD'], //파
+      [4, '#87ae22'], [5, '#87ae22'], [6, '#87ae22'], [7, '#87ae22'], [8, '#87ae22'], //연두
+      [9, '#FFD10F'], [10, '#FFD10F'], [11, '#FFD10F'], [12, '#FFD10F'], [13, '#FFD10F'], [14, '#FFD10F'], [15, '#FFD10F'], //노
+      [16, '#D90000'] //빨
     ]
 }
 
@@ -37,8 +34,8 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
       const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const properties = (typeof sidoDBdata[0] != "undefined" || sidoDBdata === [] ) ? {
         ...geo.properties,
-        pm: (sidoDBdata[0].pm)*(7/160)+1,
-        fpm: (sidoDBdata[0].fpm)*(7/100)+1
+        pm: (sidoDBdata[0].pm)/10,
+        fpm: (sidoDBdata[0].fpm)/10
       } : { ...geo.properties, pm: -1, fpm: -1 }
       return {...geo, properties}
     })
@@ -55,8 +52,8 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
         ...geo.properties,
         sidonm: (sigunguDBdata[0].sidonm),
         onlySGG: (sigunguDBdata[0].sigungunm),
-        pm: (sigunguDBdata[0].pm)*(7/160)+1,
-        fpm: (sigunguDBdata[0].fpm)*(7/100)+1
+        pm: (sigunguDBdata[0].pm)/10,
+        fpm: (sigunguDBdata[0].fpm)/10
       } : {
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
