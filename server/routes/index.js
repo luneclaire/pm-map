@@ -33,7 +33,7 @@ async function findSido(today, year, month, date, hour, callback){
     console.log(dateTime);
     var result = await Sido.find({"dateTime": dateTime},
     {_id:0, "__v":0} ).exec();
-    if (result.length === 17){
+    if (result.length > 0){
         callback({
             result:result
         });
