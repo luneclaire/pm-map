@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import sidoData from './Sido';
-import sggData from './SGGNew';
+import sidoGeoJson from './Sido';
+import sigunguGeoJson from './Sigungu';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
@@ -33,7 +33,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   //시도 geojson에 db에서 받아온 pm, fpm 수치 추가
   const SidoDBGeo = SidoDB != null ? {
     type: 'FeatureCollection',
-    features: sidoData.features.map(geo => {
+    features: sidoGeoJson.features.map(geo => {
       const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const properties = (typeof sidoDBdata[0] != "undefined" || sidoDBdata === [] ) ? {
         ...geo.properties,
@@ -42,11 +42,11 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
       } : { ...geo.properties, pm: -1, fpm: -1 }
       return {...geo, properties}
     })
-  } : { sidoData }
+  } : { sidoGeoJson }
 
   const SigunguDBGeo = SigunguDB != null ? {
     type: 'FeatureCollection',
-    features: sggData.features.map(geo => {
+    features: sigunguGeoJson.features.map(geo => {
       const sigunguDBdata = SigunguDB.result.filter( sigungu => {
         const sggSplit = geo.properties.sgg_nm.split(' ')
         return sigungu.sigungunm === sggSplit[1] && sigungu.sidonm === sggSplit[0]
@@ -65,7 +65,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
         fpm: -1 }
       return {...geo, properties}
     })
-  } : { sggData }
+  } : { sigunguGeoJson }
 
   //초기 viewport setting
   const [ viewport, setViewport ] = useState({
