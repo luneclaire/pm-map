@@ -116,7 +116,7 @@ export function Map(props) {
         { padding: 40 }
       );
 
-      setViewport({
+      setViewport({ //
         ...viewport,
         longitude,
         latitude,
