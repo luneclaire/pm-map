@@ -4,9 +4,6 @@ var router = express.Router();
 const Sido = require("../models/sido");
 const Sigungu = require("../models/sigungu");
 
-const { getAllSidoData } = require("./getSido");
-const { getAllSiGunGuData } = require("./getSigungu");
-
 
 // 숫자 formatting (두 자리 맞추기)
 function leadingZero (data){
@@ -22,7 +19,7 @@ function getDateTime(today, year, month, date, hour){
             month = yesterday.getMonth()+1;
         }
         date = yesterdayDate;
-    } else if (hour === -1){ // n일 00시 -> (n-1)일 24시로 변환 (이유: 미세먼지 api에서는 0시를 24시로 표기)
+    } else if (hour === -1){
         hour = 23;
     }    
 
@@ -34,57 +31,31 @@ function getDateTime(today, year, month, date, hour){
 async function findSido(today, year, month, date, hour, callback){
     const dateTime = getDateTime(today, year, month, date, hour);
     console.log(dateTime);
-    var result = await Sido.find({"dateTime": dateTime}).exec();
-    if (result.length > 10){
+    var result = await Sido.find({"dateTime": dateTime},
+    {_id:0, "__v":0} ).exec();
+    if (result.length === 17){
         callback({
             result:result
         });
     }else{
-        console.log('update sido data');
-        getAllSidoData()
-        .then(async()=>{
-            result = await Sido.find({"dateTime": dateTime}).exec();
-            if (result.length > 10){
-                callback({
-                    result:result
-                });
-            }else{
-                findSido(today, year, month, date, hour-1, callback);// 1시간 전 데이터 호출
-            }   
-        });
-    }
+        findSido(today, year, month, date, hour-1, callback);// 1시간 전 데이터 호출
+    }   
 }
 
 async function findSigungu(today, year, month, date, hour, sidonm, callback){
     const dateTime = getDateTime(today, year, month, date, hour);
     console.log(dateTime);
-    var result = await Sigungu.find({
+    const result = await Sigungu.find({
         "dateTime": dateTime,
         "sidonm": sidonm
-    }).exec();
-    
-    if (result.length > 10){
+    }, {_id:0, "__v":0} ).exec();
+    if (result.length > 0){
         callback({
             result:result
         });
     }else{
-        console.log('update sigungu data');
-
-        getAllSiGunGuData()
-        .then(async()=>{
-            result = await Sigungu.find({
-                "dateTime": dateTime,
-                "sidonm": sidonm
-            }).exec();
-            if (result.length > 10){
-                callback({
-                    result:result
-                });
-            }else{
-                findSigungu(today, year, month, date, hour-1, callback);// 1시간 전 데이터 호출
-            }   
-        });
-    }
+        findSigungu(today, year, month, date, hour-1, sidonm, callback);// 1시간 전 데이터 호출
+    } 
 }
 
 router.get('/sido', async function(req, res, next){
@@ -110,7 +81,7 @@ router.get('/sigungu', async function(req, res, next){
     var date = today.getDate();
     var hour = today.getHours();
     
-    const sidonm = '경상남도' //프론트에서 넘어옴 (지도 클릭 / 검색)
+    const sidonm = '서울특별시' //프론트에서 넘어옴 (지도 클릭 / 검색)
 
     findSigungu(today, year, month, date, hour, sidonm, (result)=>{
         res.send(result);
