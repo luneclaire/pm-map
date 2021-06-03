@@ -82,7 +82,12 @@ export function Map(props) {
         onlySGG: (sigunguDBdata[0].sigungunm),
         pm: (sigunguDBdata[0].pm)*(7/160)+1,
         fpm: (sigunguDBdata[0].fpm)*(7/100)+1
-      } : { ...geo.properties, pm: -1, fpm: -1 }
+      } : {
+        ...geo.properties,
+        sidonm: geo.properties.sgg_nm.split(' ')[0],
+        onlySGG: geo.properties.sgg_nm.split(' ')[1],
+        pm: -1,
+        fpm: -1 }
       return {...geo, properties}
     })
   } : { sggData }
