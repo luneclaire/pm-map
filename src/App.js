@@ -8,11 +8,15 @@ import { SearchBar } from './SearchBar';
 import { News } from './News';
 import React, { useState, Component } from 'react';
 
+
+
+
+
 function App() {
   const { Header, Footer, Sider, Content } = Layout;
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
-  const [addr, setAddr] = useState('안성시');
+  const [addr, setAddr] = useState('');
   const [pm, setPm] = useState(50);
   const [fpm, setFpm] = useState(100);
 
@@ -23,6 +27,7 @@ function App() {
     setDaySwitch(!daySwitch)
   }
   const changeAddr = (value) =>{
+    //var sido_sigungu = AddrFilter(value);
     setAddr(value);
   }
 
@@ -50,3 +55,4 @@ function App() {
 }
 
 export default App;
+
