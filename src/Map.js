@@ -1,45 +1,15 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import data from './Sido';
+import sidoData from './Sido';
 import sggData from './SGGNew';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
+import axios from 'axios';
 
 export function Map(props) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
-
-  const MOCK_DATA = [
-    {sidonm: "서울특별시", pm: 40, fpm: 32},
-    {sidonm: "부산광역시", pm: 3, fpm: 80},
-    {sidonm: "대구광역시", pm: 11, fpm: 3},
-    {sidonm: "인천광역시", pm: 20, fpm: 11},
-    {sidonm: "광주광역시", pm: 50, fpm: 47},
-    {sidonm: "대전광역시", pm: 90, fpm: 79},
-    {sidonm: "울산광역시", pm: 150, fpm: 80},
-    {sidonm: "세종특별자치시", pm: 60, fpm: 30},
-    {sidonm: "경기도", pm: 40, fpm: 12},
-    {sidonm: "강원도", pm: 35, fpm: 87},
-    {sidonm: "충청북도", pm: 20, fpm: 99},
-    {sidonm: "충청남도", pm: 110, fpm: 70},
-    {sidonm: "전라북도", pm: 140, fpm: 20},
-    {sidonm: "전라남도", pm: 90, fpm: 10},
-    {sidonm: "경상북도", pm: 80, fpm: 30},
-    {sidonm: "경상남도", pm: 70, fpm: 70},
-    {sidonm: "제주특별자치도", pm: 50, fpm: 60}
-  ]
-
-  const SGG_MOCK_DATA = [
-    {sidonm: "서울특별시", sggnm: "종로구", pm: 40, fpm: 32},
-    {sidonm: "서울특별시", sggnm: "강남구", pm: 20, fpm: 10},
-    {sidonm: "서울특별시", sggnm: "동대문구", pm: 80, fpm: 52},
-    {sidonm: "서울특별시", sggnm: "성북구", pm: 140, fpm: 92},
-    {sidonm: "경기도", sggnm: "성남시", pm: 140, fpm: 92},
-    {sidonm: "경기도", sggnm: "안산시", pm: 40, fpm: 72},
-    {sidonm: "경기도", sggnm: "안양시", pm: 70, fpm: 39},
-    {sidonm: "경기도", sggnm: "수원시", pm: 5, fpm: 2}
-  ]
 
   const pmOrFpm = props.pmSwitch ? "pm" : "fpm"
 
@@ -56,44 +26,71 @@ export function Map(props) {
       [7, '#D90000'], //빨강
     ]
 }
-
+  const [SidoDB, setSidoDB] = useState(null);
+  const [SigunguDB, setSigunguDB] = useState(null)
   const [isZoomed, setIsZoomed] = useState(false);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedSido, setSelectedSido] = useState(null);
 
-  //geojson에 미세먼지 수치 추가 (위 mock data 활용)
-  const updatedData = {
+  //db에서 sido, sigungu 데이터 받아오기
+  useEffect(() => {
+    const fetchSidoData = async () => {
+      try {
+        const response = await axios.get('./sido')
+        //yconsole.log(response)
+        setSidoDB(response.data)
+      } catch (error){
+        console.log(error)
+      }
+    }
+    const fetchSigunguData = async () => {
+      try {
+        const response = await axios.get('./sigungu')
+        setSigunguDB(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchSidoData()
+    fetchSigunguData()
+  }, []);
+
+  //시도 geojson에 db에서 받아온 pm, fpm 수치 추가
+  const SidoDBGeo = SidoDB != null ? {
     type: 'FeatureCollection',
-    features: data.features.map(x => {
-      const thisSido = MOCK_DATA.filter( md => { return md.sidonm === x.properties.sidonm} )
-      const properties = {
-        ...x.properties,
-        pm: (thisSido[0].pm)*(7/160)+1, //0-6 scale로 표현해야 하기 때문에 미세먼지 max수치를 약 160으로 잡고, 7 / 160을 곱해 계산
-        fpm: (thisSido[0].fpm)*(7/100)+1 //0-6 scale, 초미세먼지 max 수치는 100으로 잡고 7 / 100을 곱해 계산
-      };
-      return {...x, properties};
-    }) 
-  }
+    features: sidoData.features.map(geo => {
+      const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
+      const properties = (typeof sidoDBdata[0] != "undefined" || sidoDBdata === [] ) ? {
+        ...geo.properties,
+        pm: (sidoDBdata[0].pm)*(7/160)+1,
+        fpm: (sidoDBdata[0].fpm)*(7/100)+1
+      } : { ...geo.properties, pm: -1, fpm: -1 }
+      return {...geo, properties}
+    })
+  } : { sidoData }
 
-  const updatedSGGData = {
+  const SigunguDBGeo = SigunguDB != null ? {
     type: 'FeatureCollection',
-    features: sggData.features.map(x => {
-      const thisSGG = SGG_MOCK_DATA.filter( md => {
-        const sggSplit = x.properties.sgg_nm.split(' ')
-        return md.sggnm === sggSplit[1]
-        } )
-
-      const properties = (typeof thisSGG[0] != "undefined") ? {
-          ...x.properties,
-          sidonm: (thisSGG[0].sidonm),
-          onlySGG: (thisSGG[0].sggnm),
-          pm: (thisSGG[0].pm)*(7/160), //0-6 scale로 표현해야 하기 때문에 미세먼지 max수치를 약 160으로 잡고, 7 / 160을 곱해 계산
-          fpm: (thisSGG[0].fpm)*(7/100) //0-6 scale, 초미세먼지 max 수치는 100으로 잡고 7 / 100을 곱해 계산
-      } : { ...x.properties, sidonm: "undefined Sido", pm: -1, fpm: -1}
-
-      return {...x, properties};
-    }) 
-  }
+    features: sggData.features.map(geo => {
+      const sigunguDBdata = SigunguDB.result.filter( sigungu => {
+        const sggSplit = geo.properties.sgg_nm.split(' ')
+        return sigungu.sigungunm === sggSplit[1]
+      } )
+      const properties = (typeof sigunguDBdata[0] != "undefined" || sigunguDBdata === [] ) ? {
+        ...geo.properties,
+        sidonm: (sigunguDBdata[0].sidonm),
+        onlySGG: (sigunguDBdata[0].sigungunm),
+        pm: (sigunguDBdata[0].pm)*(7/160)+1,
+        fpm: (sigunguDBdata[0].fpm)*(7/100)+1
+      } : {
+        ...geo.properties,
+        sidonm: geo.properties.sgg_nm.split(' ')[0],
+        onlySGG: geo.properties.sgg_nm.split(' ')[1],
+        pm: -1,
+        fpm: -1 }
+      return {...geo, properties}
+    })
+  } : { sggData }
 
   //초기 viewport setting
   const [ viewport, setViewport ] = useState({
@@ -176,7 +173,7 @@ export function Map(props) {
         onClick={onClick}
         onViewportChange={v => setViewport(v)}
       >
-        <Source type="geojson" data={selectedSido ? updatedSGGData : updatedData }>
+        {SidoDB && <Source type="geojson" data={selectedSido ? SigunguDBGeo : SidoDBGeo }>
           { !selectedSido ?
           <Layer
             id="data"
@@ -193,7 +190,7 @@ export function Map(props) {
             filter={['==', 'sidonm', selectedSido]}
           />
           }
-        </Source>
+        </Source>}
         {hoverInfo && (
           <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
             {isZoomed ? hoverInfo.features.properties.onlySGG  : hoverInfo.features.properties.sidonm }
