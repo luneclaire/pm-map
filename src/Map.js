@@ -49,7 +49,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     features: sggData.features.map(geo => {
       const sigunguDBdata = SigunguDB.result.filter( sigungu => {
         const sggSplit = geo.properties.sgg_nm.split(' ')
-        return sigungu.sigungunm === sggSplit[1]
+        return sigungu.sigungunm === sggSplit[1] && sigungu.sidonm === sggSplit[0]
       } )
       const properties = (typeof sigunguDBdata[0] != "undefined" || sigunguDBdata === [] ) ? {
         ...geo.properties,
