@@ -77,7 +77,7 @@ async function getData() {
     sidoNames.forEach((sidoName, idx)=>{
         result.push({
             informData: tomorrow,
-            dataTime: pmTomorrow.dataTime.slice(-6,-4)+":00",
+            dataTime: pmTomorrow.dataTime.slice(0,-4)+":00",
             sidoName: sidoName,
             pm: pmResult[idx],
             fpm: fpmResult[idx]
