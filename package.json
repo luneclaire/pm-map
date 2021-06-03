@@ -10,6 +10,7 @@
     "@turf/bbox": "^6.3.0",
     "antd": "^4.16.0",
     "axios": "^0.21.1",
+    "dayjs": "^1.10.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "mapbox-gl": "^2.2.0",
