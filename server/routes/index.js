@@ -42,19 +42,18 @@ async function findSido(today, year, month, date, hour, callback){
     }   
 }
 
-async function findSigungu(today, year, month, date, hour, sidonm, callback){
+async function findSigungu(today, year, month, date, hour, callback){
     const dateTime = getDateTime(today, year, month, date, hour);
     console.log(dateTime);
     const result = await Sigungu.find({
         "dateTime": dateTime,
-        "sidonm": sidonm
     }, {_id:0, "__v":0} ).exec();
     if (result.length > 0){
         callback({
             result:result
         });
     }else{
-        findSigungu(today, year, month, date, hour-1, sidonm, callback);// 1시간 전 데이터 호출
+        findSigungu(today, year, month, date, hour-1, callback);// 1시간 전 데이터 호출
     } 
 }
 
@@ -81,9 +80,7 @@ router.get('/sigungu', async function(req, res, next){
     var date = today.getDate();
     var hour = today.getHours();
     
-    const sidonm = '서울특별시' //프론트에서 넘어옴 (지도 클릭 / 검색)
-
-    findSigungu(today, year, month, date, hour, sidonm, (result)=>{
+    findSigungu(today, year, month, date, hour, (result)=>{
         res.send(result);
     });
     
