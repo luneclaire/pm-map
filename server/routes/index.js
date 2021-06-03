@@ -35,6 +35,8 @@ async function findSido(today, year, month, date, hour, callback){
     const dateTime = getDateTime(today, year, month, date, hour);
     console.log(dateTime);
     var result = await Sido.find({"dateTime": dateTime}).exec();
+    callback({result:result})
+    /*
     if (result.length > 10){
         callback({
             result:result
@@ -52,7 +54,7 @@ async function findSido(today, year, month, date, hour, callback){
                 findSido(today, year, month, date, hour-1, callback);// 1시간 전 데이터 호출
             }   
         });
-    }
+    }*/
 }
 
 async function findSigungu(today, year, month, date, hour, sidonm, callback){
@@ -62,7 +64,8 @@ async function findSigungu(today, year, month, date, hour, sidonm, callback){
         "dateTime": dateTime,
         "sidonm": sidonm
     }).exec();
-    
+    callback({result:result})
+    /*
     if (result.length > 10){
         callback({
             result:result
@@ -84,7 +87,7 @@ async function findSigungu(today, year, month, date, hour, sidonm, callback){
                 findSigungu(today, year, month, date, hour-1, callback);// 1시간 전 데이터 호출
             }   
         });
-    }
+    }*/
 }
 
 router.get('/sido', async function(req, res, next){
