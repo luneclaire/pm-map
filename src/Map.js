@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import sidoData from './Sido';
@@ -6,12 +6,11 @@ import sggData from './SGGNew';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
-import axios from 'axios';
 
-export function Map(props) {
+export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
 
-  const pmOrFpm = props.pmSwitch ? "pm" : "fpm"
+  const pmOrFpm = pmSwitch ? "pm" : "fpm"
 
   const gradient = {
     property: pmOrFpm,
@@ -26,34 +25,10 @@ export function Map(props) {
       [7, '#D90000'], //빨강
     ]
 }
-  const [SidoDB, setSidoDB] = useState(null);
-  const [SigunguDB, setSigunguDB] = useState(null)
+
   const [isZoomed, setIsZoomed] = useState(false);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedSido, setSelectedSido] = useState(null);
-
-  //db에서 sido, sigungu 데이터 받아오기
-  useEffect(() => {
-    const fetchSidoData = async () => {
-      try {
-        const response = await axios.get('./sido')
-        //yconsole.log(response)
-        setSidoDB(response.data)
-      } catch (error){
-        console.log(error)
-      }
-    }
-    const fetchSigunguData = async () => {
-      try {
-        const response = await axios.get('./sigungu')
-        setSigunguDB(response.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchSidoData()
-    fetchSigunguData()
-  }, []);
 
   //시도 geojson에 db에서 받아온 pm, fpm 수치 추가
   const SidoDBGeo = SidoDB != null ? {
@@ -129,8 +104,8 @@ export function Map(props) {
 
       setIsZoomed(true)
       setSelectedSido(event.features[0].properties.sidonm)
-      props.changeAddr(event.features[0].properties.sidonm)
-    } else if (feature) { props.changeAddr(event.features[0].properties.sgg_nm)}
+      changeAddr(event.features[0].properties.sidonm)
+    } else if (feature) { changeAddr(event.features[0].properties.sgg_nm)}
   }
 
   //초기 줌 수치로 돌아오기
@@ -143,7 +118,7 @@ export function Map(props) {
     });
     setIsZoomed(false)
     setSelectedSido(null)
-    props.changeAddr(null)
+    changeAddr(null)
   }
 
   const onHover = useCallback(event => {
