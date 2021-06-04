@@ -1,0 +1,19 @@
+[
+  { "name": "서울특별시", "abbrev": "서울" },
+  { "name": "부산광역시", "abbrev": "부산" },
+  { "name": "대구광역시", "abbrev": "대구" },
+  { "name": "인천광역시", "abbrev": "인천" },
+  { "name": "광주광역시", "abbrev": "광주" },
+  { "name": "대전광역시", "abbrev": "대전" },
+  { "name": "울산광역시", "abbrev": "울산" },
+  { "name": "세종특별자치시", "abbrev": "세종" },
+  { "name": "경기도", "abbrev": "경기" },
+  { "name": "강원도", "abbrev": "강원" },
+  { "name": "충청북도", "abbrev": "충북" },
+  { "name": "충청남도", "abbrev": "충남" },
+  { "name": "전라북도", "abbrev": "전북" },
+  { "name": "전라남도", "abbrev": "전남" },
+  { "name": "경상북도", "abbrev": "경북" },
+  { "name": "경상남도", "abbrev": "경남" },
+  { "name": "제주특별자치도", "abbrev": "제주" }
+]

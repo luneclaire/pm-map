@@ -166,6 +166,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     )
   }, [])
   
+  // api호출로 좌표->행정구역정보 변환
   async function searchCoordinateToAddress(longitude, latitude) {
     const rest_api_key = 'bdf64f1d0092e3ba4ac8ca3a35e24e4d'
     const headers = {'Authorization': `KakaoAK ${rest_api_key}`}
@@ -181,16 +182,39 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
 
     return [sidoName, sigunguName]
   }
+
+  // 시도명 매핑
+  const sidoNameData = require("./sidoNameMapping.json")
+  const nameMapping = async (sidoName) => {
+    const result = sidoNameData.filter(({ name, abbrev }) => {
+        return abbrev === sidoName
+    })
+    return result[0].name
+  }
+
+  // 현재 위치 가져오기
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(async (position)=>{
       const {latitude, longitude} = position.coords
-      const [sidoName, sigunguName] = await searchCoordinateToAddress(longitude, latitude)
-
+      const address = await searchCoordinateToAddress(longitude, latitude)
+      const sidoName = await nameMapping(address[0])
+      const sigunguName = address[1]
       setCurrentLocation({
         longitude,
         latitude
       })
-      console.log(sidoName, sigunguName)
+
+      setViewport({ 
+        ...viewport,
+        longitude,
+        latitude,
+        zoom:9
+      })
+
+      setIsZoomed(true)
+      setSelectedSido(sidoName)
+      changeAddr(sidoName+' '+sigunguName)
+
       return [sidoName, sigunguName]
     })
   }
