@@ -6,7 +6,8 @@ import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
-import React, { useState, Component } from 'react';
+import React, { useState, Component, useEffect } from 'react';
+import axios from 'axios';
 
 
 
@@ -14,6 +15,10 @@ import React, { useState, Component } from 'react';
 
 function App() {
   const { Header, Footer, Sider, Content } = Layout;
+
+  const [SidoDB, setSidoDB] = useState(null);
+  const [SigunguDB, setSigunguDB] = useState(null);
+
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
   const [addr, setAddr] = useState('');
@@ -31,6 +36,29 @@ function App() {
     setAddr(value);
   }
 
+  //db에서 sido, sigungu 데이터 받아오기
+  useEffect(() => {
+    const fetchSidoData = async () => {
+      try {
+        const response = await axios.get('./sido')
+        //yconsole.log(response)
+        setSidoDB(response.data)
+      } catch (error){
+        console.log(error)
+      }
+    }
+    const fetchSigunguData = async () => {
+      try {
+        const response = await axios.get('./sigungu')
+        setSigunguDB(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchSidoData()
+    fetchSigunguData()
+  }, []);
+
   return (
     <Layout className="pm-app">
       <Header>
@@ -39,7 +67,7 @@ function App() {
       <Layout>
         <Sider width={600} className="maparea">
           <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
-          <Map pmSwitch = {pmSwitch} changeAddr = {changeAddr}/>
+          <Map pmSwitch = {pmSwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} />
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
