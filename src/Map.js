@@ -6,6 +6,9 @@ import sigunguGeoJson from './Sigungu';
 import { Button } from 'antd';
 import { SmileTwoTone, MehTwoTone, FrownTwoTone, AlertTwoTone, CloseCircleTwoTone, ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
+import { Icon } from '@ant-design/compatible';
+import { ReactComponent as location} from './location.svg' 
+import axios from 'axios';
 
 function ColorLegend() {
   return (
@@ -53,6 +56,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   const [isZoomed, setIsZoomed] = useState(false);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedSido, setSelectedSido] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   //시도 geojson에 db에서 받아온 pm, fpm 수치 추가
   const SidoDBGeo = SidoDB != null ? {
@@ -162,6 +166,35 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     )
   }, [])
   
+  async function searchCoordinateToAddress(longitude, latitude) {
+    const rest_api_key = 'bdf64f1d0092e3ba4ac8ca3a35e24e4d'
+    const headers = {'Authorization': `KakaoAK ${rest_api_key}`}
+    const url = 'https://dapi.kakao.com/v2/local/geo/coord2address.json'
+    const params = {x: longitude, y: latitude}
+    const response = await axios.get(url, {
+      params: params,
+      headers: headers
+    })
+    
+    const sidoName = response.data.documents[0].address.region_1depth_name
+    const sigunguName = response.data.documents[0].address.region_2depth_name
+
+    return [sidoName, sigunguName]
+  }
+  const getLocation = () => {
+    navigator.geolocation.getCurrentPosition(async (position)=>{
+      const {latitude, longitude} = position.coords
+      const [sidoName, sigunguName] = await searchCoordinateToAddress(longitude, latitude)
+
+      setCurrentLocation({
+        longitude,
+        latitude
+      })
+      console.log(sidoName, sigunguName)
+      return [sidoName, sigunguName]
+    })
+  }
+
   return (
     <div>
       <ReactMapGL
@@ -202,6 +235,13 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
         icon={<ZoomOutOutlined/>}
         onClick={zoomOut}
       />
+      <Button
+        shape="circle"
+        size="large"
+        onClick={getLocation}
+      >
+        <Icon component={location} style={{fontSize:"1.5em"}} />
+      </Button>
       <ColorLegend/>
     </div>
   );
