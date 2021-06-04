@@ -6,6 +6,7 @@ import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
+import { NaverApi } from './NaverApi';
 import React, { useState, Component, useEffect } from 'react';
 import axios from 'axios';
 
@@ -22,8 +23,8 @@ function App() {
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
   const [addr, setAddr] = useState('');
-  const [pm, setPm] = useState(50);
-  const [fpm, setFpm] = useState(100);
+  const [pm, setPm] = useState(0);
+  const [fpm, setFpm] = useState(0);
 
   const swapPm = () =>{
     setPmSwitch(!pmSwitch)
@@ -34,6 +35,27 @@ function App() {
   const changeAddr = (value) =>{
     //var sido_sigungu = AddrFilter(value);
     setAddr(value);
+    var Addr = value;
+    const split = Addr.split(' ');
+    if(Addr == split){ //sido 검색
+      for(var i=0; i<SidoDB.result.length; i++){
+        if(SidoDB.result[i].sidonm == split[0]){
+          setPm(SidoDB.result[i].pm);
+          setFpm(SidoDB.result[i].fpm);
+          console.log(SidoDB.result[i].pm);
+          break;
+        }
+      }
+    }
+    else{ //sigungu 검색
+      for(var i=0; i<SigunguDB.result.length; i++){
+        if(SigunguDB.result[i].sidonm == split[0] && SigunguDB.result[i].sigungunm == split[1]){
+          setPm(SigunguDB.result[i].pm);
+          setFpm(SigunguDB.result[i].fpm);
+          break;
+        }
+      }
+    }
   }
 
   //db에서 sido, sigungu 데이터 받아오기
@@ -72,7 +94,7 @@ function App() {
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
           <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
-          <News/>
+          <NaverApi/>
         </Content>
       </Layout>
       <Footer>

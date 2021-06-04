@@ -20,7 +20,7 @@ async function requestApi(sidoName){
     queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1');
     queryParams += '&' + encodeURIComponent('ver') + '=' + encodeURIComponent('1.3'); //버젼
     queryParams += '&' + encodeURIComponent('sidoName') + '=' + encodeURIComponent(sidoName); //시도 이름
-    queryParams += '&' + encodeURIComponent('returnType') + '=' + encodeURIComponent('json'); //josn으로 받기
+    queryParams += '&' + encodeURIComponent('returnType') + '=' + encodeURIComponent('json'); //json으로 받기
     
     const uri = url + queryParams;
     var {data} = await axios.get(uri);

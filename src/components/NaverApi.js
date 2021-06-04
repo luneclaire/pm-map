@@ -7,9 +7,8 @@ const option = {
     start  : 1, //검색 시작 위치
     display: 3, //가져올 이미지 갯수
     sort   : 'sim', //정렬 유형 (sim:유사도, date:날짜)
-  }
+}
   
-
 request.get({
   uri:'https://openapi.naver.com/v1/search/news', //xml 요청 주소는 https://openapi.naver.com/v1/search/image.xml
   qs :option,
