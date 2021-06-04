@@ -119,7 +119,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
         { padding: 40 }
       );
 
-      setViewport({
+      setViewport({ //
         ...viewport,
         longitude,
         latitude,
