@@ -195,24 +195,43 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     return result[0].name
   }
 
+  const sidoBbox = require("./sidoBbox.json")
+  const getBbox = async (sidoName) => {
+    const result = sidoBbox.filter(({ name, bbox }) => {
+        return name === sidoName
+    })
+    return result[0].bbox
+  }
+
   // 현재 위치 가져오기
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(async (position)=>{
-      const {latitude, longitude} = position.coords
-      const address = await searchCoordinateToAddress(longitude, latitude)
+      const currentLatitude = position.coords.latitude
+      const currentLongitude = position.coords.longitude
+      const address = await searchCoordinateToAddress(currentLongitude, currentLatitude)
       const sidoName = await nameMapping(address[0])
       const sigunguName = address[1]
 
+      const [minLng, minLat, maxLng, maxLat] = await getBbox(sidoName)
+      const vp = new WebMercatorViewport(viewport);
+      const {longitude, latitude, zoom} = vp.fitBounds(
+        [
+          [minLng, minLat],
+          [maxLng, maxLat]
+        ],
+        { padding: 40 }
+      );
+
       setCurrentLocation({
-        longitude: longitude,
-        latitude: latitude
+        longitude: currentLongitude,
+        latitude: currentLatitude
       })
 
       setViewport({ 
         ...viewport,
         longitude,
         latitude,
-        zoom:9
+        zoom
       })
 
       setIsZoomed(true)
