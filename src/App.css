@@ -47,3 +47,27 @@
   margin-bottom: 50px;
   color: blue;
 }
+
+.color-legend {
+  position: absolute;
+  top: 5.4%;
+  right: 15%;
+  max-width: 320px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  padding: 12px 12px 5px 12px;
+  margin: 20px;
+  font-size: 15px;
+  color: black;
+  outline: none;
+  list-style-type: none;
+  text-align: right;
+}
+
+.align-right {
+  display: inline-block;
+}
+
+.align-left {
+  float: left;
+}
