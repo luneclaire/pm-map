@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const axios = require('axios');
 
 const Sido = require("../models/sido");
 const Sigungu = require("../models/sigungu");
@@ -30,7 +31,7 @@ function getDateTime(today, year, month, date, hour){
 // DB에서 현재(가장 최신의) 미세먼지/초미세먼지 수치 가져오기
 async function findSido(today, year, month, date, hour, callback){
     const dateTime = getDateTime(today, year, month, date, hour);
-    console.log(dateTime);
+    //console.log(dateTime);
     var result = await Sido.find({"dateTime": dateTime},
     {_id:0, "__v":0} ).exec();
     if (result.length > 0){
@@ -44,7 +45,7 @@ async function findSido(today, year, month, date, hour, callback){
 
 async function findSigungu(today, year, month, date, hour, callback){
     const dateTime = getDateTime(today, year, month, date, hour);
-    console.log(dateTime);
+    //console.log(dateTime);
     const result = await Sigungu.find({
         "dateTime": dateTime,
     }, {_id:0, "__v":0} ).exec();
@@ -84,6 +85,28 @@ router.get('/sigungu', async function(req, res, next){
         res.send(result);
     });
     
+});
+
+const NAVER_CLIENT_ID     = 'aFTNbrc5Jy6sygbQRhZN'
+const NAVER_CLIENT_SECRET = 'wxcwuCX9Vr'
+router.get('/news', async function(req, res, next){
+    const response = await axios.get("https://openapi.naver.com/v1/search/news", {
+        params:{
+            query  : '미세먼지', //뉴스 검색 키워드
+            start  : 1, //검색 시작 위치
+            display: 3, //가져올 이미지 갯수
+            sort   : 'sim' //정렬 유형 (sim:유사도, date:날짜)
+        },
+        headers: {
+            'X-Naver-Client-Id': NAVER_CLIENT_ID,
+            'X-Naver-Client-Secret': NAVER_CLIENT_SECRET
+        }
+    })
+    if (response) {
+        console.log('======= response.data =========')
+        console.log(response.data)
+        res.send(response.data)
+    }
 });
 
 module.exports = router;

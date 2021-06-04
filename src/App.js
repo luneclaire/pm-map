@@ -94,7 +94,7 @@ function App() {
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
           <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
-          <NaverApi/>
+          <News/>
         </Content>
       </Layout>
       <Footer>
