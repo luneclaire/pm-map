@@ -1,87 +1,86 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import sidoData from './Sido';
-import sggData from './SGGNew';
+import sidoGeoJson from './Sido';
+import sigunguGeoJson from './Sigungu';
 import { Button } from 'antd';
-import { ZoomOutOutlined } from '@ant-design/icons';
+import { SmileTwoTone, MehTwoTone, FrownTwoTone, AlertTwoTone, CloseCircleTwoTone, ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
-import axios from 'axios';
 
-export function Map(props) {
+function ColorLegend() {
+  return (
+    <ul className="color-legend">
+      <li>
+        <SmileTwoTone className="align-left" twoToneColor = "#1C3FFD"/>
+        <span className="alight-right">좋음 ~30</span>
+      </li>
+      <li>
+        <MehTwoTone className="align-left" twoToneColor = "#87ae22"/>
+        <span className="alight-right"/>보통 ~80
+      </li>
+      <li>
+        <FrownTwoTone className="align-left" twoToneColor = "#FFD10F"/>
+        <span className="alight-right"/> 나쁨 ~150
+      </li>
+      <li>
+        <AlertTwoTone className="align-left" twoToneColor = "#D90000"/>
+        <span className="alight-right"/>&nbsp;&nbsp;&nbsp;최악 151~
+      </li>
+      <li>
+        <CloseCircleTwoTone className="align-left" twoToneColor = "#565656"/>
+        <span className="align-right">정보 없음</span>
+      </li>
+    </ul>
+  );
+}
+
+export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
 
-  const pmOrFpm = props.pmSwitch ? "pm" : "fpm"
+  const pmOrFpm = pmSwitch ? "pm" : "fpm"
 
   const gradient = {
     property: pmOrFpm,
     stops: [
       [0, '#565656'], //미세먼지 수치가 주어지지 않았을 때 회색
-      [1, '#1C3FFD'], //파랑
-      [2, '#0080c5'], //하늘
-      [3, '#168039'], //초록
-      [4, '#87ae22'], //연두
-      [5, '#FFD10F'], //노랑
-      [6, '#f48000'], //주황
-      [7, '#D90000'], //빨강
+      [1, '#1C3FFD'], [2, '#1C3FFD'], [3, '#1C3FFD'], //파
+      [4, '#87ae22'], [5, '#87ae22'], [6, '#87ae22'], [7, '#87ae22'], [8, '#87ae22'], //연두
+      [9, '#FFD10F'], [10, '#FFD10F'], [11, '#FFD10F'], [12, '#FFD10F'], [13, '#FFD10F'], [14, '#FFD10F'], [15, '#FFD10F'], //노
+      [16, '#D90000'] //빨
     ]
 }
-  const [SidoDB, setSidoDB] = useState(null);
-  const [SigunguDB, setSigunguDB] = useState(null)
+
   const [isZoomed, setIsZoomed] = useState(false);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedSido, setSelectedSido] = useState(null);
 
-  //db에서 sido, sigungu 데이터 받아오기
-  useEffect(() => {
-    const fetchSidoData = async () => {
-      try {
-        const response = await axios.get('./sido')
-        //yconsole.log(response)
-        setSidoDB(response.data)
-      } catch (error){
-        console.log(error)
-      }
-    }
-    const fetchSigunguData = async () => {
-      try {
-        const response = await axios.get('./sigungu')
-        setSigunguDB(response.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchSidoData()
-    fetchSigunguData()
-  }, []);
-
   //시도 geojson에 db에서 받아온 pm, fpm 수치 추가
   const SidoDBGeo = SidoDB != null ? {
     type: 'FeatureCollection',
-    features: sidoData.features.map(geo => {
+    features: sidoGeoJson.features.map(geo => {
       const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const properties = (typeof sidoDBdata[0] != "undefined" || sidoDBdata === [] ) ? {
         ...geo.properties,
-        pm: (sidoDBdata[0].pm)*(7/160)+1,
-        fpm: (sidoDBdata[0].fpm)*(7/100)+1
+        pm: (sidoDBdata[0].pm)/10,
+        fpm: (sidoDBdata[0].fpm)/10
       } : { ...geo.properties, pm: -1, fpm: -1 }
       return {...geo, properties}
     })
-  } : { sidoData }
+  } : { sidoGeoJson }
 
   const SigunguDBGeo = SigunguDB != null ? {
     type: 'FeatureCollection',
-    features: sggData.features.map(geo => {
+    features: sigunguGeoJson.features.map(geo => {
       const sigunguDBdata = SigunguDB.result.filter( sigungu => {
         const sggSplit = geo.properties.sgg_nm.split(' ')
-        return sigungu.sigungunm === sggSplit[1]
+        return sigungu.sigungunm === sggSplit[1] && sigungu.sidonm === sggSplit[0]
       } )
       const properties = (typeof sigunguDBdata[0] != "undefined" || sigunguDBdata === [] ) ? {
         ...geo.properties,
         sidonm: (sigunguDBdata[0].sidonm),
         onlySGG: (sigunguDBdata[0].sigungunm),
-        pm: (sigunguDBdata[0].pm)*(7/160)+1,
-        fpm: (sigunguDBdata[0].fpm)*(7/100)+1
+        pm: (sigunguDBdata[0].pm)/10,
+        fpm: (sigunguDBdata[0].fpm)/10
       } : {
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
@@ -90,7 +89,7 @@ export function Map(props) {
         fpm: -1 }
       return {...geo, properties}
     })
-  } : { sggData }
+  } : { sigunguGeoJson }
 
   //초기 viewport setting
   const [ viewport, setViewport ] = useState({
@@ -129,8 +128,8 @@ export function Map(props) {
 
       setIsZoomed(true)
       setSelectedSido(event.features[0].properties.sidonm)
-      props.changeAddr(event.features[0].properties.sidonm)
-    } else if (feature) { props.changeAddr(event.features[0].properties.sgg_nm)}
+      changeAddr(event.features[0].properties.sidonm)
+    } else if (feature) { changeAddr(event.features[0].properties.sgg_nm)}
   }
 
   //초기 줌 수치로 돌아오기
@@ -143,7 +142,7 @@ export function Map(props) {
     });
     setIsZoomed(false)
     setSelectedSido(null)
-    props.changeAddr(null)
+    changeAddr(null)
   }
 
   const onHover = useCallback(event => {
@@ -203,6 +202,7 @@ export function Map(props) {
         icon={<ZoomOutOutlined/>}
         onClick={zoomOut}
       />
+      <ColorLegend/>
     </div>
   );
 }
