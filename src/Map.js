@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
+import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import sidoGeoJson from './Sido';
 import sigunguGeoJson from './Sigungu';
@@ -8,6 +8,7 @@ import { SmileTwoTone, MehTwoTone, FrownTwoTone, AlertTwoTone, CloseCircleTwoTon
 import bbox from '@turf/bbox'
 import { Icon } from '@ant-design/compatible';
 import { ReactComponent as location} from './location.svg' 
+import { ReactComponent as pin} from './pin.svg' 
 import axios from 'axios';
 
 function ColorLegend() {
@@ -107,6 +108,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
     console.log(event)
+    setCurrentLocation(null)
     const feature = event.features ? event.features[0] : null
     if (!selectedSido && feature) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
       const [minLng, minLat, maxLng, maxLat] = bbox(feature);
@@ -147,6 +149,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     setIsZoomed(false)
     setSelectedSido(null)
     changeAddr(null)
+    setCurrentLocation(null)
   }
 
   const onHover = useCallback(event => {
@@ -199,9 +202,10 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
       const address = await searchCoordinateToAddress(longitude, latitude)
       const sidoName = await nameMapping(address[0])
       const sigunguName = address[1]
+
       setCurrentLocation({
-        longitude,
-        latitude
+        longitude: longitude,
+        latitude: latitude
       })
 
       setViewport({ 
@@ -219,6 +223,8 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     })
   }
 
+  let size = 30
+  
   return (
     <div>
       <ReactMapGL
@@ -251,6 +257,15 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
           <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
             {isZoomed ? hoverInfo.features.properties.onlySGG  : hoverInfo.features.properties.sidonm }
           </div>
+        )}
+        {isZoomed && currentLocation && (
+          <Marker {...currentLocation}>
+            <div
+              style={{ transform: `translate(${-size / 2}px,${-size}px)` }}
+            >
+              <Icon component={pin} style={{fontSize:"2em"}} />
+            </div>
+          </Marker>
         )}
       </ReactMapGL>
       <Button
