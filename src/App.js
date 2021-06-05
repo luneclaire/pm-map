@@ -10,10 +10,6 @@ import { NaverApi } from './NaverApi';
 import React, { useState, Component, useEffect } from 'react';
 import axios from 'axios';
 
-
-
-
-
 function App() {
   const { Header, Footer, Sider, Content } = Layout;
 
@@ -36,13 +32,13 @@ function App() {
     //var sido_sigungu = AddrFilter(value);
     setAddr(value);
     var Addr = value;
-    const split = Addr.split(' ');
+    const split = Addr?.split(' ');
     if(Addr == split){ //sido 검색
       for(var i=0; i<SidoDB.result.length; i++){
-        if(SidoDB.result[i].sidonm == split[0]){
+        if(split !== undefined && SidoDB.result[i].sidonm == split[0]){
           setPm(SidoDB.result[i].pm);
           setFpm(SidoDB.result[i].fpm);
-          console.log(SidoDB.result[i].pm);
+          //console.log(pm, fpm);
           break;
         }
       }

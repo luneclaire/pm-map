@@ -25,6 +25,8 @@
 .databox {
   margin-top: 5px;
   background: rgba(255, 255, 255, 0.5);
+  align-items: center;
+  text-align: center;
 }
 
 .centertext { text-align: center; }
