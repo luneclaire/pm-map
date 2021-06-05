@@ -107,7 +107,6 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
 
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
-    console.log(event)
     setCurrentLocation(null)
     const feature = event.features ? event.features[0] : null
     if (!selectedSido && feature) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
@@ -148,8 +147,8 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     });
     setIsZoomed(false)
     setSelectedSido(null)
-    changeAddr(null)
     setCurrentLocation(null)
+    changeAddr('')
   }
 
   const onHover = useCallback(event => {
@@ -237,7 +236,6 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
       setIsZoomed(true)
       setSelectedSido(sidoName)
       changeAddr(sidoName+' '+sigunguName)
-
       return [sidoName, sigunguName]
     })
   }
