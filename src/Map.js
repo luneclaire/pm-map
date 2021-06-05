@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport } from 'react-map-gl';
+import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import sidoGeoJson from './Sido';
 import sigunguGeoJson from './Sigungu';
@@ -8,6 +8,7 @@ import { SmileTwoTone, MehTwoTone, FrownTwoTone, AlertTwoTone, CloseCircleTwoTon
 import bbox from '@turf/bbox'
 import { Icon } from '@ant-design/compatible';
 import { ReactComponent as location} from './location.svg' 
+import { ReactComponent as pin} from './pin.svg' 
 import axios from 'axios';
 
 function ColorLegend() {
@@ -106,7 +107,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
 
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
-    //console.log(event)
+    setCurrentLocation(null)
     const feature = event.features ? event.features[0] : null
     if (!selectedSido && feature) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
       const [minLng, minLat, maxLng, maxLat] = bbox(feature);
@@ -146,6 +147,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     });
     setIsZoomed(false)
     setSelectedSido(null)
+    setCurrentLocation(null)
     changeAddr('')
   }
 
@@ -166,6 +168,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     )
   }, [])
   
+  // api호출로 좌표->행정구역정보 변환
   async function searchCoordinateToAddress(longitude, latitude) {
     const rest_api_key = 'bdf64f1d0092e3ba4ac8ca3a35e24e4d'
     const headers = {'Authorization': `KakaoAK ${rest_api_key}`}
@@ -181,20 +184,64 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
 
     return [sidoName, sigunguName]
   }
+
+  // 시도명 매핑
+  const sidoNameData = require("./sidoNameMapping.json")
+  const nameMapping = async (sidoName) => {
+    const result = sidoNameData.filter(({ name, abbrev }) => {
+        return abbrev === sidoName
+    })
+    return result[0].name
+  }
+
+  const sidoBbox = require("./sidoBbox.json")
+  const getBbox = async (sidoName) => {
+    const result = sidoBbox.filter(({ name, bbox }) => {
+        return name === sidoName
+    })
+    return result[0].bbox
+  }
+
+  // 현재 위치 가져오기
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(async (position)=>{
-      const {latitude, longitude} = position.coords
-      const [sidoName, sigunguName] = await searchCoordinateToAddress(longitude, latitude)
+      const currentLatitude = position.coords.latitude
+      const currentLongitude = position.coords.longitude
+      const address = await searchCoordinateToAddress(currentLongitude, currentLatitude)
+      const sidoName = await nameMapping(address[0])
+      const sigunguName = address[1]
+
+      const [minLng, minLat, maxLng, maxLat] = await getBbox(sidoName)
+      const vp = new WebMercatorViewport(viewport);
+      const {longitude, latitude, zoom} = vp.fitBounds(
+        [
+          [minLng, minLat],
+          [maxLng, maxLat]
+        ],
+        { padding: 40 }
+      );
 
       setCurrentLocation({
-        longitude,
-        latitude
+        longitude: currentLongitude,
+        latitude: currentLatitude
       })
-      //console.log(sidoName, sigunguName)
+
+      setViewport({ 
+        ...viewport,
+        longitude,
+        latitude,
+        zoom
+      })
+
+      setIsZoomed(true)
+      setSelectedSido(sidoName)
+      changeAddr(sidoName+' '+sigunguName)
       return [sidoName, sigunguName]
     })
   }
 
+  let size = 30
+  
   return (
     <div>
       <ReactMapGL
@@ -227,6 +274,15 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
           <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
             {isZoomed ? hoverInfo.features.properties.onlySGG  : hoverInfo.features.properties.sidonm }
           </div>
+        )}
+        {isZoomed && currentLocation && (
+          <Marker {...currentLocation}>
+            <div
+              style={{ transform: `translate(${-size / 2}px,${-size}px)` }}
+            >
+              <Icon component={pin} style={{fontSize:"2em"}} />
+            </div>
+          </Marker>
         )}
       </ReactMapGL>
       <Button
