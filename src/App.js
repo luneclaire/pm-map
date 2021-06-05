@@ -6,7 +6,6 @@ import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
-import { NaverApi } from './NaverApi';
 import React, { useState, Component, useEffect } from 'react';
 import axios from 'axios';
 
@@ -19,8 +18,8 @@ function App() {
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
   const [addr, setAddr] = useState('');
-  const [pm, setPm] = useState(0);
-  const [fpm, setFpm] = useState(0);
+  const [pm, setPm] = useState('');
+  const [fpm, setFpm] = useState('');
 
   const swapPm = () =>{
     setPmSwitch(!pmSwitch)
@@ -90,7 +89,7 @@ function App() {
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
           <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
-          <NaverApi/>
+          <News/>
         </Content>
       </Layout>
       <Footer>
