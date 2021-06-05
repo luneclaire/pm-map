@@ -6,7 +6,6 @@ import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
-import { NaverApi } from './NaverApi';
 import React, { useState, Component, useEffect } from 'react';
 import axios from 'axios';
 
