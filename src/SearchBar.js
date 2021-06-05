@@ -2,7 +2,7 @@ import { Input } from 'antd';
 import { PmData } from './PmData';
 import React, { useState, Component } from 'react';
 
-const sido_sigungu = require('./sido_sigungu.json')
+const sido_sigungu = require('./data/sido_sigungu.json')
 function AddrFilter(input_addr){
   var sido = '';
   var sigungu = '';
