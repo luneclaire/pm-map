@@ -23,8 +23,8 @@ function App() {
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
   const [addr, setAddr] = useState('');
-  const [pm, setPm] = useState(0);
-  const [fpm, setFpm] = useState(0);
+  const [pm, setPm] = useState('');
+  const [fpm, setFpm] = useState('');
 
   const swapPm = () =>{
     setPmSwitch(!pmSwitch)
