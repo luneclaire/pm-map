@@ -1,14 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import sidoGeoJson from './Sido';
-import sigunguGeoJson from './Sigungu';
+import sidoGeoJson from './data/Sido';
+import sigunguGeoJson from './data/Sigungu';
 import { Button } from 'antd';
 import { SmileTwoTone, MehTwoTone, FrownTwoTone, AlertTwoTone, CloseCircleTwoTone, ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
 import { Icon } from '@ant-design/compatible';
-import { ReactComponent as location} from './location.svg' 
-import { ReactComponent as pin} from './pin.svg' 
+import { ReactComponent as location} from './icon/location.svg' 
+import { ReactComponent as pin} from './icon/pin.svg' 
 import axios from 'axios';
 
 function ColorLegend() {
@@ -186,7 +186,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   }
 
   // 시도명 매핑
-  const sidoNameData = require("./sidoNameMapping.json")
+  const sidoNameData = require("./data/sidoNameMapping.json")
   const nameMapping = async (sidoName) => {
     const result = sidoNameData.filter(({ name, abbrev }) => {
         return abbrev === sidoName
@@ -194,7 +194,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
     return result[0].name
   }
 
-  const sidoBbox = require("./sidoBbox.json")
+  const sidoBbox = require("./data/sidoBbox.json")
   const getBbox = async (sidoName) => {
     const result = sidoBbox.filter(({ name, bbox }) => {
         return name === sidoName
