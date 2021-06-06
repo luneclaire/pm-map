@@ -82,7 +82,7 @@ function App() {
         <p className="title">미세먼지 지도</p>
       </Header>
       <Layout>
-        <Sider width={600} className="maparea">
+        <Sider width={510} className="maparea">
           <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
           <Map pmSwitch = {pmSwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} />
         </Sider>
