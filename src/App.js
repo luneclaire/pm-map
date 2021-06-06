@@ -14,6 +14,7 @@ function App() {
 
   const [SidoDB, setSidoDB] = useState(null);
   const [SigunguDB, setSigunguDB] = useState(null);
+  const [forecastDB, setForecastDB] = useState(null);
 
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
@@ -72,8 +73,17 @@ function App() {
         console.log(error)
       }
     }
+    const fetchForecastData = async () => {
+      try {
+        const response = await axios.get('./forecast')
+        setForecastDB(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
     fetchSidoData()
     fetchSigunguData()
+    fetchForecastData()
   }, []);
 
   return (
@@ -84,7 +94,7 @@ function App() {
       <Layout>
         <Sider width={510} className="maparea">
           <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
-          <Map pmSwitch = {pmSwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} />
+          <Map pmSwitch = {pmSwitch} daySwitch = {daySwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>

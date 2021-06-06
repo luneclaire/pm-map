@@ -38,19 +38,23 @@ function ColorLegend() {
   );
 }
 
-export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
+export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, forecastDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
 
-  const pmOrFpm = pmSwitch ? "pm" : "fpm"
+  const pmOrFpm = daySwitch ? (pmSwitch ? "pm" : "fpm") : (pmSwitch ? "pmForecast" : "fpmForecast")
 
   const gradient = {
     property: pmOrFpm,
-    stops: [
+    stops: daySwitch ?
+    [
       [0, '#565656'], //미세먼지 수치가 주어지지 않았을 때 회색
       [1, '#1C3FFD'], [2, '#1C3FFD'], [3, '#1C3FFD'], //파
       [4, '#87ae22'], [5, '#87ae22'], [6, '#87ae22'], [7, '#87ae22'], [8, '#87ae22'], //연두
       [9, '#FFD10F'], [10, '#FFD10F'], [11, '#FFD10F'], [12, '#FFD10F'], [13, '#FFD10F'], [14, '#FFD10F'], [15, '#FFD10F'], //노
       [16, '#D90000'] //빨
+    ] :
+    [
+      [1, '#1C3FFD'], [2, '#87ae22'], [3, '#FFD10F'] // 내일 예보시 색상코드
     ]
 }
 
@@ -60,15 +64,18 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   const [currentLocation, setCurrentLocation] = useState(null);
 
   //시도 geojson에 db에서 받아온 pm, fpm 수치 추가
-  const SidoDBGeo = SidoDB != null ? {
+  const SidoDBGeo = SidoDB != null && forecastDB != null ? {
     type: 'FeatureCollection',
     features: sidoGeoJson.features.map(geo => {
       const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
+      const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
       const properties = (typeof sidoDBdata[0] != "undefined" || sidoDBdata === [] ) ? {
         ...geo.properties,
         pm: (sidoDBdata[0].pm)/10,
-        fpm: (sidoDBdata[0].fpm)/10
-      } : { ...geo.properties, pm: -1, fpm: -1 }
+        fpm: (sidoDBdata[0].fpm)/10,
+        pmForecast: (forecastDBdata[0].pm),
+        fpmForecast: (forecastDBdata[0].fpm)
+      } : { ...geo.properties, pm: -1, fpm: -1, pmForecast: -1, fpmForecast: -1 }
       return {...geo, properties}
     })
   } : { sidoGeoJson }
@@ -109,7 +116,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
   const onClick = (event) => {
     setCurrentLocation(null)
     const feature = event.features ? event.features[0] : null
-    if (!selectedSido && feature) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
+    if (!selectedSido && feature && daySwitch) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
       const [minLng, minLat, maxLng, maxLat] = bbox(feature);
       const vp = new WebMercatorViewport(viewport);
       const {longitude, latitude, zoom} = vp.fitBounds(
@@ -134,7 +141,7 @@ export function Map( {pmSwitch, changeAddr, SidoDB, SigunguDB} ) {
       setIsZoomed(true)
       setSelectedSido(event.features[0].properties.sidonm)
       changeAddr(event.features[0].properties.sidonm)
-    } else if (feature) { changeAddr(event.features[0].properties.sgg_nm)}
+    } else if (feature && daySwitch) { changeAddr(event.features[0].properties.sgg_nm)}
   }
 
   //초기 줌 수치로 돌아오기
