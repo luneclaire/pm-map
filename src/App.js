@@ -6,7 +6,7 @@ import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
-import React, { useState, Component, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {

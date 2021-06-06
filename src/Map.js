@@ -4,39 +4,13 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import sidoGeoJson from './data/Sido';
 import sigunguGeoJson from './data/Sigungu';
 import { Button } from 'antd';
-import { SmileTwoTone, MehTwoTone, FrownTwoTone, AlertTwoTone, CloseCircleTwoTone, ZoomOutOutlined } from '@ant-design/icons';
+import { ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
 import { Icon } from '@ant-design/compatible';
 import { ReactComponent as location} from './icon/location.svg' 
 import { ReactComponent as pin} from './icon/pin.svg' 
 import axios from 'axios';
-
-function ColorLegend() {
-  return (
-    <ul className="color-legend">
-      <li>
-        <SmileTwoTone className="align-left" twoToneColor = "#1C3FFD"/>
-        <span className="alight-right">좋음 ~30</span>
-      </li>
-      <li>
-        <MehTwoTone className="align-left" twoToneColor = "#87ae22"/>
-        <span className="alight-right"/>보통 ~80
-      </li>
-      <li>
-        <FrownTwoTone className="align-left" twoToneColor = "#FFD10F"/>
-        <span className="alight-right"/> 나쁨 ~150
-      </li>
-      <li>
-        <AlertTwoTone className="align-left" twoToneColor = "#D90000"/>
-        <span className="alight-right"/>&nbsp;&nbsp;&nbsp;최악 151~
-      </li>
-      <li>
-        <CloseCircleTwoTone className="align-left" twoToneColor = "#565656"/>
-        <span className="align-right">정보 없음</span>
-      </li>
-    </ul>
-  );
-}
+import { ColorLegend } from './ColorLegend';
 
 export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, forecastDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
@@ -246,8 +220,6 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
       return [sidoName, sigunguName]
     })
   }
-
-  let size = 30
   
   return (
     <div>
@@ -285,7 +257,7 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
         {isZoomed && currentLocation && (
           <Marker {...currentLocation}>
             <div
-              style={{ transform: `translate(${-size / 2}px,${-size}px)` }}
+              style={{ transform : "translate(-15px,-30px)"}}
             >
               <Icon component={pin} style={{fontSize:"2em"}} />
             </div>
