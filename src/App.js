@@ -40,6 +40,8 @@ function App() {
           setFpm(SidoDB.result[i].fpm);
           break;
         }
+        setPm(-1);
+        setFpm(-1);
       }
     }
     else{ //sigungu 검색
@@ -49,6 +51,8 @@ function App() {
           setFpm(SigunguDB.result[i].fpm);
           break;
         }
+        setPm(-1);
+        setFpm(-1);
       }
     }
   }

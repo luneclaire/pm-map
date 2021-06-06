@@ -43,13 +43,13 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
     features: sidoGeoJson.features.map(geo => {
       const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
-      const properties = (typeof sidoDBdata[0] != "undefined" || sidoDBdata === [] ) ? {
+      const properties = sidoDBdata !== [] ? {
         ...geo.properties,
         pm: (sidoDBdata[0].pm)/10,
         fpm: (sidoDBdata[0].fpm)/10,
         pmForecast: (forecastDBdata[0].pm),
         fpmForecast: (forecastDBdata[0].fpm)
-      } : { ...geo.properties, pm: -1, fpm: -1, pmForecast: -1, fpmForecast: -1 }
+      } : { ...geo.properties, pm: -1, fpm: -1, pmForecast: forecastDBdata[0].pm, fpmForecast: forecastDBdata[0].fpm }
       return {...geo, properties}
     })
   } : { sidoGeoJson }
@@ -61,10 +61,10 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
         const sggSplit = geo.properties.sgg_nm.split(' ')
         return sigungu.sigungunm === sggSplit[1] && sigungu.sidonm === sggSplit[0]
       } )
-      const properties = (typeof sigunguDBdata[0] != "undefined" || sigunguDBdata === [] ) ? {
+      const properties = (sigunguDBdata !== [] && typeof sigunguDBdata[0] !== "undefined") ? {
         ...geo.properties,
-        sidonm: (sigunguDBdata[0].sidonm),
-        onlySGG: (sigunguDBdata[0].sigungunm),
+        sidonm: geo.properties.sgg_nm.split(' ')[0],
+        onlySGG: geo.properties.sgg_nm.split(' ')[1],
         pm: (sigunguDBdata[0].pm)/10,
         fpm: (sigunguDBdata[0].fpm)/10
       } : {

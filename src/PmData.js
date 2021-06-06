@@ -1,8 +1,9 @@
 import React from 'react'
+import { Empty } from 'antd'
 import { SmileTwoTone, MehTwoTone, FrownTwoTone, AlertTwoTone} from '@ant-design/icons';
 
 export function DataZone(val){
-	if (val.val == 0) { return <p>데이터가 없습니다.</p>}
+	if (val.val == -1) { return <><Empty description={false}/><p style={{fontSize: "medium"}}>측정 데이터가 없습니다.</p></>}
 	else if (val.val < 31) { return <SmileTwoTone twoToneColor = "#1C3FFD" style={{fontSize: '400%'}}/> }
 	else if (val.val < 81) { return <MehTwoTone twoToneColor = "#87ae22" style={{fontSize: '400%'}}/> }
 	else if (val.val < 151) { return <FrownTwoTone twoToneColor = "#FFD10F" style={{fontSize: '400%'}}/> }
@@ -23,11 +24,11 @@ export function PmData({addr, pm, fpm, daySwitch}) {
 						<div className = "datazone">
 							<div>
 								<DataZone val = {pm}/>
-								<p>미세먼지: {pm}</p>
+								{pm != -1 ? <p>미세먼지: {pm}</p> : <p>미세먼지</p>}
 							</div>
 							<div>
 								<DataZone val = {fpm}/>
-								<p>초미세먼지: {fpm}</p>
+								{fpm != -1 ? <p>초미세먼지: {fpm}</p> : <p>초미세먼지</p>}
 							</div>
 						</div>
 					</>
