@@ -5,21 +5,21 @@ export function News(){
     const [newsList, setNewsList] = useState([{
         description: "",
         link: "",
-        originallink: "",
+        thumbnail: "",
         pubDate : "",
         title : ""
     },
     {
         description: "",
         link: "",
-        originallink: "",
+        thumbnail: "",
         pubDate : "",
         title : ""
     },
     {
         description: "",
         link: "",
-        originallink: "",
+        thumbnail: "",
         pubDate : "",
         title : ""
     }
@@ -29,7 +29,7 @@ export function News(){
     const getNews = async () => {
         try{
             const response = await axios.get('./news')
-            setNewsList(response.data.items)
+            setNewsList(response.data)
         } catch (error){
             console.log(error)
         }
@@ -39,30 +39,19 @@ export function News(){
   
   return(
     <div>
-        <div>
-            <a className="newsarea" href={newsList[0].originallink} target="_blank" rel="noopener noreferrer">
-              {newsList[0].title.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
-            </a>
-            <p>
-               {newsList[0].description.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
-            </p>
+      {newsList.map((news) => (
+        <div className="news">
+            <img className = "news-image" src={news.thumbnail} style={{width:"20%", height:"20%"}}/>
+            <div>
+              <a className="news-title" href={news.link} target="_blank" rel="noopener noreferrer">
+                {news.title.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
+              </a>
+              <p className="news-desc">
+                {news.description.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
+              </p>
+            </div>
         </div>
-        <div>
-            <a className="newsarea" href={newsList[1].originallink} target="_blank" rel="noopener noreferrer">
-              {newsList[1].title.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
-            </a>
-            <p>
-               {newsList[1].description.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
-            </p>
-        </div>
-        <div>
-            <a className="newsarea" href={newsList[2].originallink} target="_blank" rel="noopener noreferrer">
-              {newsList[2].title.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
-            </a>
-            <p>
-               {newsList[2].description.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
-            </p>
-        </div>
+      ))}
     </div>
   );
 }

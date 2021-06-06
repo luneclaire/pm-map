@@ -1,4 +1,16 @@
 const axios = require('axios')
+const cheerio = require("cheerio");
+const { link } = require('fs');
+
+const getHtml = async (link) => {
+  try {
+    return await axios.get(link);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
 
 const NAVER_CLIENT_ID     = 'aFTNbrc5Jy6sygbQRhZN'
 const NAVER_CLIENT_SECRET = 'wxcwuCX9Vr'
@@ -17,8 +29,22 @@ async function getNews() {
         }
     })
     if (response) {
-        return response.data
+        result = []
+        for(const news of response.data.items){
+            const html = await getHtml(news.link)
+            const $ = cheerio.load(html.data);
+            const thumbnail = $("#articleBodyContents").find("span.end_photo_org > img").attr('src');
+            result.push({
+                title: news.title,
+                link: news.link,
+                description: news.description,
+                pubDate: link.pubDate,
+                thumbnail: thumbnail
+            })
+        }
     }
+    return result
+    
 }
 
 exports.getNews = getNews
