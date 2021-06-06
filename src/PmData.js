@@ -13,16 +13,21 @@ export function PmData({addr, pm, fpm, daySwitch}) {
 	return (
 		<div className="databox">
 			<h1 style={{fontSize: 'x-large', margin: '15px'}}>위치: {addr}</h1>	
-			<p style={{fontSize: 'xx-large', margin: '15px', paddingTop: '30px'}}>
+			<p style={{fontSize: 'xx-large', margin: '15px'}}>
 				{
 					addr == '' || addr == ' '
 					? <p>지역을 검색하거나 지도를 클릭하세요</p>
-					: <>
-						<DataZone val = {pm}/>
-						<p>미세먼지: {pm}</p>
-						<DataZone val = {fpm}/>
-						<p>초미세먼지: {fpm}</p>
-					</>
+					: <div className = "datazone">
+						<div>
+							<DataZone val = {pm}/>
+							<p>미세먼지: {pm}</p>
+						</div>
+						<div>
+							<DataZone val = {fpm}/>
+							<p>초미세먼지: {fpm}</p>
+						</div>
+					</div>
+					
 				}
 			</p>
 		</div>
