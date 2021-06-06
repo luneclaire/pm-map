@@ -6,7 +6,7 @@ import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
-import React, { useState, Component, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
 
   const [SidoDB, setSidoDB] = useState(null);
   const [SigunguDB, setSigunguDB] = useState(null);
+  const [forecastDB, setForecastDB] = useState(null);
 
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
@@ -37,9 +38,10 @@ function App() {
         if(split !== undefined && SidoDB.result[i].sidonm == split[0]){
           setPm(SidoDB.result[i].pm);
           setFpm(SidoDB.result[i].fpm);
-          //console.log(pm, fpm);
           break;
         }
+        setPm(-1);
+        setFpm(-1);
       }
     }
     else{ //sigungu 검색
@@ -49,6 +51,8 @@ function App() {
           setFpm(SigunguDB.result[i].fpm);
           break;
         }
+        setPm(-1);
+        setFpm(-1);
       }
     }
   }
@@ -58,7 +62,6 @@ function App() {
     const fetchSidoData = async () => {
       try {
         const response = await axios.get('./sido')
-        //yconsole.log(response)
         setSidoDB(response.data)
       } catch (error){
         console.log(error)
@@ -72,8 +75,17 @@ function App() {
         console.log(error)
       }
     }
+    const fetchForecastData = async () => {
+      try {
+        const response = await axios.get('./forecast')
+        setForecastDB(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
     fetchSidoData()
     fetchSigunguData()
+    fetchForecastData()
   }, []);
 
   return (
@@ -84,7 +96,7 @@ function App() {
       <Layout>
         <Sider width={510} className="maparea">
           <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
-          <Map pmSwitch = {pmSwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} />
+          <Map pmSwitch = {pmSwitch} daySwitch = {daySwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
