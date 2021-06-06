@@ -20,7 +20,7 @@ async function getNews() {
         params:{
             query  : '미세먼지', //뉴스 검색 키워드
             start  : 1, //검색 시작 위치
-            display: 3, //가져올 이미지 갯수
+            display: 3, //가져올 뉴스 갯수
             sort   : 'sim' //정렬 유형 (sim:유사도, date:날짜)
         },
         headers: {
@@ -38,7 +38,7 @@ async function getNews() {
                 title: news.title,
                 link: news.link,
                 description: news.description,
-                pubDate: link.pubDate,
+                pubDate: news.pubDate,
                 thumbnail: thumbnail
             })
         }

@@ -89,6 +89,10 @@
   padding-left: 1em;
 }
 
+.news-pubDate{
+  text-align: right;
+}
+
 .align-right {
   display: inline-block;
 }
