@@ -38,7 +38,6 @@ function App() {
         if(split !== undefined && SidoDB.result[i].sidonm == split[0]){
           setPm(SidoDB.result[i].pm);
           setFpm(SidoDB.result[i].fpm);
-          //console.log(pm, fpm);
           break;
         }
       }
@@ -59,7 +58,6 @@ function App() {
     const fetchSidoData = async () => {
       try {
         const response = await axios.get('./sido')
-        //yconsole.log(response)
         setSidoDB(response.data)
       } catch (error){
         console.log(error)

@@ -230,6 +230,7 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
         onHover={onHover}
         onClick={onClick}
         onViewportChange={v => setViewport(v)}
+        scrollZoom={false}
       >
         {SidoDB && <Source type="geojson" data={selectedSido ? SigunguDBGeo : SidoDBGeo }>
           { !selectedSido ?
