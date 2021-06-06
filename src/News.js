@@ -1,43 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 export function News(){
-    const [newsList, setNewsList] = useState([{
-        description: "",
-        link: "",
-        thumbnail: "",
-        pubDate : "",
-        title : ""
-    },
-    {
-        description: "",
-        link: "",
-        thumbnail: "",
-        pubDate : "",
-        title : ""
-    },
-    {
-        description: "",
-        link: "",
-        thumbnail: "",
-        pubDate : "",
-        title : ""
-    }
-    ]);
+    const [newsList, setNewsList] = useState([]);
     
   useEffect(() => {
     const getNews = async () => {
         try{
             const response = await axios.get('./news')
             setNewsList(response.data)
+            console.log(response.data)
         } catch (error){
             console.log(error)
         }
     }
     getNews()
   }, []);
-  //<b>는 검색어 query인 미세먼지에만 붙어있는데, 필요없어서 제거
+  
   return(
     <div>
       {newsList.map((news) => (
@@ -50,6 +29,9 @@ export function News(){
               <p className="news-desc">
                 {news.description.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
               </p>
+              <div className="news-pubDate">
+                {news.pubDate.slice(0,16)}
+              </div>
             </div>
         </div>
       ))}

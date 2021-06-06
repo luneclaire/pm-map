@@ -48,14 +48,6 @@
   max-width: 400px;
 }
 
-.descriptionarea{
-  color: black;
-}
-
-.pubdatearea{
-  text-align: right;
-}
-
 .color-legend {
   position: absolute;
   top: 5.4%;
@@ -95,6 +87,10 @@
 
 .news-desc{
   padding-left: 1em;
+}
+
+.news-pubDate{
+  text-align: right;
 }
 
 .align-right {
