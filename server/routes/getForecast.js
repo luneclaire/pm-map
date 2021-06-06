@@ -70,17 +70,33 @@ async function getData() {
     var fpmResult = []
     fpmTomorrow.informGrade.split(',').forEach(async (val, index, arr) => {
         var [sido, fpm] = val.split(':')
-        fpmResult.push(fpm)
+        fpmResult.push(fpm.trim())
     })
 
-    result = []
-    sidoNames.forEach((sidoName, idx)=>{
+    var result = []
+    const steps = ["좋음", "보통", "나쁨"]
+    sidoNames.forEach((sido, idx)=>{
+        var sidoname = sido
+        const dataTime = pmTomorrow.dataTime.slice(0,-4)+":00"
+        const pm = steps.indexOf(pmResult[idx])+1
+        const fpm = steps.indexOf(fpmResult[idx])+1
+
+        if ( sido === '경기남부' ){
+            sidoname = '경기도'
+        } else if (sido === '경기북부'){
+            return
+        } else if (sido === '영동'){
+            sidoname = '강원도'
+        } else if (sido === '영서'){
+            return
+        }
+
         result.push({
             informData: tomorrow,
-            dataTime: pmTomorrow.dataTime.slice(0,-4)+":00",
-            sidoName: sidoName,
-            pm: pmResult[idx],
-            fpm: fpmResult[idx]
+            dataTime: dataTime,
+            sidoName: sidoname,
+            pm: pm,
+            fpm: fpm
         })
     })
     
