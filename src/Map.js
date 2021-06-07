@@ -89,13 +89,10 @@ export function Map( {pmSwitch, daySwitch, addr, changeAddr, SidoDB, SigunguDB, 
   const [ viewport, setViewport ] = useState(initalViewport);
 
   useEffect(() => {
-    console.log("useeffect on")
     if (!daySwitch) { 
-      console.log(daySwitch, "내일이양")
       zoomOut()
     }
     if (addr?.length > 2 ) {
-      console.log("검색해서 바뀌어썽")
       const splitAddr = addr.split(' ')
 
       const findSidoBbox = sidoBbox.filter(sido => sido.name === splitAddr[0])
@@ -249,7 +246,9 @@ export function Map( {pmSwitch, daySwitch, addr, changeAddr, SidoDB, SigunguDB, 
         ...viewport,
         longitude,
         latitude,
-        zoom
+        zoom,
+        transitionInterpolator: new LinearInterpolator(),
+        transitionDuration: 500
       })
 
       setIsZoomed(true)
