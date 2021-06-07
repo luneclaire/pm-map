@@ -207,32 +207,11 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
       const sidoName = await nameMapping(address[0])
       const sigunguName = address[1]
 
-      const [minLng, minLat, maxLng, maxLat] = await getBbox(sidoName)
-      const vp = new WebMercatorViewport(viewport);
-      const {longitude, latitude, zoom} = vp.fitBounds(
-        [
-          [minLng, minLat],
-          [maxLng, maxLat]
-        ],
-        { padding: 40 }
-      );
-
       setCurrentLocation({
         longitude: currentLongitude,
         latitude: currentLatitude
       })
 
-      setViewport({ 
-        ...viewport,
-        longitude,
-        latitude,
-        zoom,
-        transitionInterpolator: new LinearInterpolator(),
-        transitionDuration: 500
-      })
-
-      setIsZoomed(true)
-      setSelectedSido(sidoName)
       changeAddr(sidoName+' '+sigunguName)
       return [sidoName, sigunguName]
     })
