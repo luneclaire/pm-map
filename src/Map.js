@@ -42,7 +42,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   const SidoDBGeo = SidoDB != null && forecastDB != null ? {
     type: 'FeatureCollection',
     features: sidoGeoJson.features.map(geo => {
-      const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
+      const sidoDBdata = SidoDB.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
       const properties = (sidoDBdata !== []  && typeof sidoDBdata[0] !== undefined) ? {
         ...geo.properties,
@@ -58,7 +58,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   const SigunguDBGeo = SigunguDB != null ? {
     type: 'FeatureCollection',
     features: sigunguGeoJson.features.map(geo => {
-      const sigunguDBdata = SigunguDB.result.filter( sigungu => {
+      const sigunguDBdata = SigunguDB.filter( sigungu => {
         const sggSplit = geo.properties.sgg_nm.split(' ')
         return sigungu.sigungunm === sggSplit[1] && sigungu.sidonm === sggSplit[0]
       } )

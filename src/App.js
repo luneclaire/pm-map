@@ -23,6 +23,7 @@ function App() {
   const [addr, setAddr] = useState('');
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
+  const [dateTime, setDateTime] = useState('');
 
   const swapIsPm = () =>{
     setIsPm(!isPm)
@@ -37,33 +38,32 @@ function App() {
     //var sido_sigungu = AddrFilter(value);
     setAddr(value);
     var Addr = value;
-    console.log(Addr)
     const split = Addr?.split(' ');
     Addr.replace(' ', '');
-    console.log(Addr)
-    console.log(split[0])
     if(Addr == split[0] || Addr == split[0] + ' '){ //sido만 검색
-      console.log('test')
-      for(var i=0; i<SidoDB.result.length; i++){
-        if(split !== undefined && SidoDB.result[i].sidonm == split[0]){
-          setPm(SidoDB.result[i].pm);
-          setFpm(SidoDB.result[i].fpm);
+      for(var i=0; i<SidoDB.length; i++){
+        if(split !== undefined && SidoDB[i].sidonm == split[0]){
+          setPm(SidoDB[i].pm);
+          setFpm(SidoDB[i].fpm);
+          setDateTime(SidoDB[i].dateTime)      
           break;
         }
         setPm(-1);
         setFpm(-1);
+        setDateTime('');
       }
     }
     else{ //sigungu 검색
-      console.log('test2')
-      for(var i=0; i<SigunguDB.result.length; i++){
-        if(SigunguDB.result[i].sidonm == split[0] && SigunguDB.result[i].sigungunm == split[1]){
-          setPm(SigunguDB.result[i].pm);
-          setFpm(SigunguDB.result[i].fpm);
+      for(var i=0; i<SigunguDB.length; i++){
+        if(SigunguDB[i].sidonm == split[0] && SigunguDB[i].sigungunm == split[1]){
+          setPm(SigunguDB[i].pm);
+          setFpm(SigunguDB[i].fpm);
+          setDateTime(SigunguDB[i].dateTime);
           break;
         }
         setPm(-1);
         setFpm(-1);
+        setDateTime('');
       }
     }
   }
@@ -115,7 +115,7 @@ function App() {
           <div>
             {
               pmTabOn == true
-              ? <PmData addr = {addr} pm = {pm} fpm = {fpm} isPm = {isPm} isToday = {isToday}/>
+              ? <PmData addr = {addr} pm = {pm} fpm = {fpm} dateTime = {dateTime} isToday = {isToday}/>
               : <News/>
             }
           </div>

@@ -10,7 +10,7 @@ export function DataZone(val){
 	else { return <AlertTwoTone twoToneColor = "#D90000" style={{fontSize: '400%'}}/> }
 }
 
-export function PmData({addr, pm, fpm, isToday}) {
+export function PmData({addr, pm, fpm, dateTime, isToday}) {
 	return (
 		<div className="databox">
 			
@@ -31,6 +31,7 @@ export function PmData({addr, pm, fpm, isToday}) {
 								{fpm != -1 ? <p>초미세먼지: {fpm}</p> : <p>초미세먼지</p>}
 							</div>
 						</div>
+						<div style={{fontSize: 'small'}}>측정일시:{dateTime}</div>
 					</>
 				}
 			</p>
