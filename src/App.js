@@ -34,7 +34,6 @@ function App() {
     var Addr = value;
     const split = Addr?.split(' ');
     if(Addr.trim() === split[0]){ //sido만 검색
-      console.log('test')
       for(var i=0; i<SidoDB.result.length; i++){
         if(split !== undefined && SidoDB.result[i].sidonm === split[0]){
           setPm(SidoDB.result[i].pm);
@@ -46,7 +45,6 @@ function App() {
       }
     }
     else{ //sigungu 검색
-      console.log('test2')
       for(var i=0; i<SigunguDB.result.length; i++){
         if(SigunguDB.result[i].sidonm === split[0] && SigunguDB.result[i].sigungunm === split[1]){
           setPm(SigunguDB.result[i].pm);
