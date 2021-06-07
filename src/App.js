@@ -24,23 +24,23 @@ function App() {
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
 
-  const swapIsPm = () =>{
+  const swapIsPm = () => {
     setIsPm(!isPm)
   }
-  const swapIsToDay = () =>{
+  const swapIsToDay = () => {
     setIsToday(!isToday)
   }
-  const swapPmTabOn = () =>{
+  const swapPmTabOn = () => {
     setPmTabOn(!pmTabOn)
   }
-  const changeAddr = (value) =>{
+  const changeAddr = (value) => {
     setAddr(value);
     var Addr = value;
     const split = Addr?.split(' ');
     if(Addr.trim() === split[0]){ //sido만 검색
       console.log('test')
       for(var i=0; i<SidoDB.result.length; i++){
-        if(split !== undefined && SidoDB.result[i].sidonm == split[0]){
+        if(split !== undefined && SidoDB.result[i].sidonm === split[0]){
           setPm(SidoDB.result[i].pm);
           setFpm(SidoDB.result[i].fpm);
           break;
@@ -52,7 +52,7 @@ function App() {
     else{ //sigungu 검색
       console.log('test2')
       for(var i=0; i<SigunguDB.result.length; i++){
-        if(SigunguDB.result[i].sidonm == split[0] && SigunguDB.result[i].sigungunm == split[1]){
+        if(SigunguDB.result[i].sidonm === split[0] && SigunguDB.result[i].sigungunm === split[1]){
           setPm(SigunguDB.result[i].pm);
           setFpm(SigunguDB.result[i].fpm);
           break;
@@ -109,7 +109,7 @@ function App() {
           <SelectPmTabOn swapPmTabOn = {swapPmTabOn}/>
           <div>
             {
-              pmTabOn == true
+              pmTabOn === true
               ? <PmData addr = {addr} pm = {pm} fpm = {fpm} isPm = {isPm} isToday = {isToday}/>
               : <News/>
             }

@@ -22,7 +22,7 @@ function AddrFilter(input_addr){
           ((temp_addr.includes(sido_sigungu[i].regions[j].substr(0, sido_sigungu[i].regions[j].length-1))) && //종로->종로구
           (sido_sigungu[i].regions[j].length-1 > 1))){ //서구,중구... 거르기. 놔두면 서귀포도 서구가 인식함.
             sigungu = sido_sigungu[i].regions[j];
-            if(sido == ''){
+            if(sido === ''){
               sido = sido_sigungu[i].name[0];
               break outer;
             }
