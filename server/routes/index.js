@@ -13,7 +13,7 @@ async function findDB(DB, now, callback) {
     const dateTime = now.format('YYYY-MM-DD HH:00');
     var result = await DB.find({ "dateTime": dateTime },
         { _id: 0, "__v": 0 }).exec()
-    if (result.length > 0) {
+    if (result.length >= 17) {
         callback({
             result: result
         })
