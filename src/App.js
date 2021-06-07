@@ -30,7 +30,7 @@ function App() {
   const swapIsToDay = () =>{
     setIsToday(!isToday)
   }
-  const swapTab = () =>{
+  const swapPmTabOn = () =>{
     setPmTabOn(!pmTabOn)
   }
   const changeAddr = (value) =>{
@@ -101,11 +101,11 @@ function App() {
       <Layout>
         <Sider width={510} className="maparea">
           <SelectDayPm swapIsPm = {swapIsPm} swapIsToDay = {swapIsToDay}/>
-          <Map isPm = {isPm} isToday = {isToday} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
+          <Map isPm = {isPm} isToday = {isToday} changeAddr = {changeAddr} addr = {addr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
-          <SelectTab swapTab = {swapTab}/>
+          <SelectTab swapPmTabOn = {swapPmTabOn}/>
           <div>
             {
               pmTabOn == true

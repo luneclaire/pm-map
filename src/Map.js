@@ -13,7 +13,7 @@ import { ReactComponent as pin} from './icon/pin.svg'
 import axios from 'axios';
 import { ColorLegend } from './ColorLegend';
 
-export function Map( {isPm, isToday, changeAddr, SidoDB, SigunguDB, forecastDB} ) {
+export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, forecastDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
 
   const pmOrFpm = isToday ? (isPm ? "pm" : "fpm") : (isPm ? "pmForecast" : "fpmForecast")
@@ -89,7 +89,7 @@ export function Map( {isPm, isToday, changeAddr, SidoDB, SigunguDB, forecastDB} 
   const [ viewport, setViewport ] = useState(initalViewport);
 
   useEffect(() => {
-    if (!daySwitch) { 
+    if (!isToday) { 
       zoomOut()
     }
     if (addr?.length > 2 ) {
@@ -120,7 +120,7 @@ export function Map( {isPm, isToday, changeAddr, SidoDB, SigunguDB, forecastDB} 
       setSelectedSido(splitAddr[0])
 
     }
-  }, [addr, daySwitch])
+  }, [addr, isToday])
 
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
