@@ -24,16 +24,16 @@ function App() {
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
 
-  const swapIsPm = () =>{
+  const swapIsPm = () => {
     setIsPm(!isPm)
   }
-  const swapIsToDay = () =>{
+  const swapIsToDay = () => {
     setIsToday(!isToday)
   }
-  const swapPmTabOn = () =>{
+  const swapPmTabOn = () => {
     setPmTabOn(!pmTabOn)
   }
-  const changeAddr = (value) =>{
+  const changeAddr = (value) => {
     setAddr(value);
     var Addr = value;
     const split = Addr?.split(' ');
