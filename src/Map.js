@@ -43,7 +43,7 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
     features: sidoGeoJson.features.map(geo => {
       const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
-      const properties = sidoDBdata !== [] ? {
+      const properties = (sidoDBdata !== []  && typeof sidoDBdata[0] !== undefined) ? {
         ...geo.properties,
         pm: (sidoDBdata[0].pm)/10,
         fpm: (sidoDBdata[0].fpm)/10,
