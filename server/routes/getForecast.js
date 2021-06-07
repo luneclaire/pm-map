@@ -1,8 +1,8 @@
 const axios = require('axios')
 const dayjs = require('dayjs')
 
-const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK7Is0Wud7kLs4WyEzTcRTl3Esbxbg%3D%3D'
-// const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D'
+// const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK7Is0Wud7kLs4WyEzTcRTl3Esbxbg%3D%3D'
+const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D'
 // const serviceKey = 'dC0Mal22V6WU0%2BFhs1pxRYGtxCk3gyIU84PpYDzSQJgl1A86QtlR5iPgjNHnNMPjEn55t7YbHljqayKmwclVlg%3D%3D'
 
 async function requestApi(searchDate) {
@@ -77,7 +77,7 @@ async function getData() {
     const steps = ["좋음", "보통", "나쁨"]
     sidoNames.forEach((sido, idx)=>{
         var sidoname = sido
-        const dataTime = pmTomorrow.dataTime.slice(0,-4)+":00"
+        const dateTime = pmTomorrow.dataTime.slice(0,-4)+":00"
         const pm = steps.indexOf(pmResult[idx])+1
         const fpm = steps.indexOf(fpmResult[idx])+1
 
@@ -93,7 +93,7 @@ async function getData() {
 
         result.push({
             informData: tomorrow,
-            dataTime: dataTime,
+            dateTime: dateTime,
             sidoName: sidoname,
             pm: pm,
             fpm: fpm

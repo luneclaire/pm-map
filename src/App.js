@@ -22,6 +22,7 @@ function App() {
   const [addr, setAddr] = useState('');
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
+  const [dateTime, setDateTime] = useState('');
 
   const swapIsPm = () => {
     setIsPm(!isPm)
@@ -34,25 +35,29 @@ function App() {
     var Addr = value;
     const split = Addr?.split(' ');
     if(Addr.trim() === split[0]){ //sido만 검색
-      for(var i=0; i<SidoDB.result.length; i++){
-        if(split !== undefined && SidoDB.result[i].sidonm === split[0]){
-          setPm(SidoDB.result[i].pm);
-          setFpm(SidoDB.result[i].fpm);
+      for(var i=0; i<SidoDB.length; i++){
+        if(split !== undefined && SidoDB[i].sidonm === split[0]){
+          setPm(SidoDB[i].pm);
+          setFpm(SidoDB[i].fpm);
+          setDateTime(SidoDB[i].dateTime);
           break;
         }
         setPm(-1);
         setFpm(-1);
+        setDateTime('');
       }
     }
     else{ //sigungu 검색
-      for(var i=0; i<SigunguDB.result.length; i++){
-        if(SigunguDB.result[i].sidonm === split[0] && SigunguDB.result[i].sigungunm === split[1]){
-          setPm(SigunguDB.result[i].pm);
-          setFpm(SigunguDB.result[i].fpm);
+      for(var i=0; i<SigunguDB.length; i++){
+        if(SigunguDB[i].sidonm === split[0] && SigunguDB[i].sigungunm === split[1]){
+          setPm(SigunguDB[i].pm);
+          setFpm(SigunguDB[i].fpm);
+          setDateTime(SigunguDB[i].dateTime);
           break;
         }
         setPm(-1);
         setFpm(-1);
+        setDateTime('');
       }
     }
   }
@@ -103,7 +108,7 @@ function App() {
           <div>
             <Tabs size='large' defaultActiveKey='pm' centered>
               <TabPane tab='미세먼지' key='pm'>
-                <PmData addr = {addr} pm = {pm} fpm = {fpm} isPm = {isPm} isToday = {isToday}/>
+                <PmData addr = {addr} pm = {pm} fpm = {fpm} dateTime = {dateTime} isToday = {isToday}/>
               </TabPane>
               <TabPane tab='뉴스' key='news'>
                 <News/>
