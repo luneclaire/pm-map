@@ -1,17 +1,17 @@
 import './App.css';
-import { Layout } from 'antd';
+import { Layout, Tabs } from 'antd';
 import { Info } from './Info';
 import { PmData } from './PmData';
 import { SelectDayPm } from './SelectDayPm';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
-import {SelectPmTabOn} from './SelectPmTabOn'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
   const { Header, Footer, Sider, Content } = Layout;
+  const { TabPane } = Tabs
 
   const [SidoDB, setSidoDB] = useState(null);
   const [SigunguDB, setSigunguDB] = useState(null);
@@ -19,7 +19,6 @@ function App() {
 
   const [isPm, setIsPm] = useState(true)
   const [isToday, setIsToday] = useState(true)
-  const [pmTabOn, setPmTabOn] = useState(true)
   const [addr, setAddr] = useState('');
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
@@ -31,15 +30,11 @@ function App() {
   const swapIsToDay = () => {
     setIsToday(!isToday)
   }
-  const swapPmTabOn = () => {
-    setPmTabOn(!pmTabOn)
-  }
   const changeAddr = (value) => {
     setAddr(value);
     var Addr = value;
     const split = Addr?.split(' ');
     if(Addr.trim() === split[0]){ //sido만 검색
-      console.log('test')
       for(var i=0; i<SidoDB.length; i++){
         if(split !== undefined && SidoDB[i].sidonm === split[0]){
           setPm(SidoDB[i].pm);
@@ -53,7 +48,6 @@ function App() {
       }
     }
     else{ //sigungu 검색
-      console.log('test2')
       for(var i=0; i<SigunguDB.length; i++){
         if(SigunguDB[i].sidonm === split[0] && SigunguDB[i].sigungunm === split[1]){
           setPm(SigunguDB[i].pm);
@@ -111,13 +105,15 @@ function App() {
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
-          <SelectPmTabOn swapPmTabOn = {swapPmTabOn}/>
           <div>
-            {
-              pmTabOn == true
-              ? <PmData addr = {addr} pm = {pm} fpm = {fpm} dateTime = {dateTime} isToday = {isToday}/>
-              : <News/>
-            }
+            <Tabs size='large' defaultActiveKey='pm' centered>
+              <TabPane tab='미세먼지' key='pm'>
+                <PmData addr = {addr} pm = {pm} fpm = {fpm} dateTime = {dateTime} isToday = {isToday}/>
+              </TabPane>
+              <TabPane tab='뉴스' key='news'>
+                <News/>
+              </TabPane>
+            </Tabs>
           </div>
         </Content>
       </Layout>

@@ -43,8 +43,8 @@ export function SearchBar(props) {
   
   //onSearch = 검색버튼을 눌렀을 때
   return (
-    <div>
-      <Search placeholder="xx시 xx동 형태로 검색해주세요" onSearch={onSearch} style={{ width: 400}}/>
+    <div style={{padding: '10px'}}>
+      <Search placeholder="xx시 xx동 형태로 검색해주세요" onSearch={onSearch} style={{ width: 400, alignSelf: 'center'}}/>
     </div>
   );
 }
