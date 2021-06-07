@@ -6,6 +6,7 @@ import { SelectDay } from './SelectDay';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
+import {SelectTab} from './SelectTab'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -18,6 +19,7 @@ function App() {
 
   const [pmSwitch, setPmSwitch] = useState(true)
   const [daySwitch, setDaySwitch] = useState(true)
+  const [tabSwitch, setTabSwitch] = useState(true)
   const [addr, setAddr] = useState('');
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
@@ -27,6 +29,9 @@ function App() {
   }
   const swapDay = () =>{
     setDaySwitch(!daySwitch)
+  }
+  const swapTab = () =>{
+    setTabSwitch(!tabSwitch)
   }
   const changeAddr = (value) =>{
     //var sido_sigungu = AddrFilter(value);
@@ -100,8 +105,14 @@ function App() {
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
-          <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
-          <News/>
+          <SelectTab swapTab = {swapTab}/>
+          <div>
+            {
+              tabSwitch == true
+              ? <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
+              : <News/>
+            }
+          </div>
         </Content>
       </Layout>
       <Footer>
