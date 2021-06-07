@@ -6,7 +6,7 @@ import { SelectDayPm } from './SelectDayPm';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
-import {SelectTab} from './SelectTab'
+import {SelectPmTabOn} from './SelectPmTabOn'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -37,8 +37,13 @@ function App() {
     //var sido_sigungu = AddrFilter(value);
     setAddr(value);
     var Addr = value;
+    console.log(Addr)
     const split = Addr?.split(' ');
-    if(Addr == split){ //sido 검색
+    Addr.replace(' ', '');
+    console.log(Addr)
+    console.log(split[0])
+    if(Addr == split[0] || Addr == split[0] + ' '){ //sido만 검색
+      console.log('test')
       for(var i=0; i<SidoDB.result.length; i++){
         if(split !== undefined && SidoDB.result[i].sidonm == split[0]){
           setPm(SidoDB.result[i].pm);
@@ -50,6 +55,7 @@ function App() {
       }
     }
     else{ //sigungu 검색
+      console.log('test2')
       for(var i=0; i<SigunguDB.result.length; i++){
         if(SigunguDB.result[i].sidonm == split[0] && SigunguDB.result[i].sigungunm == split[1]){
           setPm(SigunguDB.result[i].pm);
@@ -105,7 +111,7 @@ function App() {
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
-          <SelectTab swapPmTabOn = {swapPmTabOn}/>
+          <SelectPmTabOn swapPmTabOn = {swapPmTabOn}/>
           <div>
             {
               pmTabOn == true

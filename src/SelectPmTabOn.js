@@ -1,6 +1,6 @@
 import { Radio } from 'antd';
 
-export function SelectTab(props) {
+export function SelectPmTabOn(props) {
   	function onChangePmTabOn(e) {
 		props.swapPmTabOn();
 	}
