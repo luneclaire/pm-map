@@ -96,7 +96,7 @@ function App() {
       <Layout>
         <Sider width={510} className="maparea">
           <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
-          <Map pmSwitch = {pmSwitch} daySwitch = {daySwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
+          <Map pmSwitch = {pmSwitch} daySwitch = {daySwitch} addr = {addr} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
