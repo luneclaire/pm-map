@@ -15,12 +15,11 @@ async function findDB(DB, sido, now) {
         "dateTime": dateTime,
         "sidonm": sido
     },{ _id: 0, "__v": 0 }).exec()
-
-    if (result) {
+    if (result.length > 0) {
         return result
     } else {
         const before = now.subtract(1, 'hour')
-        findDB(DB, sido, before)
+        return findDB(DB, sido, before)
     }
 }
 const sidoNames = [
@@ -47,7 +46,7 @@ router.get('/sido', async function (req, res, next) {
     let result = []
     for(const sidoName of sidoNames){
         const sidoData = await findDB(Sido, sidoName, now)
-        result = result.concat(sidoData)
+        result.push(...sidoData)
     }
     res.send(result)
 })
@@ -58,7 +57,7 @@ router.get('/sigungu', async function (req, res, next) {
     let result = []
     for(const sidoName of sidoNames){
         const sigunguData = await findDB(Sigungu, sidoName, now)
-        result = result.concat(sigunguData)
+        result.push(...sigunguData)
     }
     res.send(result)
 })
