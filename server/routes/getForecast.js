@@ -77,7 +77,7 @@ async function getData() {
     const steps = ["좋음", "보통", "나쁨"]
     sidoNames.forEach((sido, idx)=>{
         var sidoname = sido
-        const dataTime = pmTomorrow.dataTime.slice(0,-4)+":00"
+        const dateTime = pmTomorrow.dataTime.slice(0,-4)+":00"
         const pm = steps.indexOf(pmResult[idx])+1
         const fpm = steps.indexOf(fpmResult[idx])+1
 
@@ -93,7 +93,7 @@ async function getData() {
 
         result.push({
             informData: tomorrow,
-            dataTime: dataTime,
+            dateTime: dateTime,
             sidoName: sidoname,
             pm: pm,
             fpm: fpm
