@@ -12,14 +12,14 @@ import { ReactComponent as pin} from './icon/pin.svg'
 import axios from 'axios';
 import { ColorLegend } from './ColorLegend';
 
-export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, forecastDB} ) {
+export function Map( {isPm, isToday, changeAddr, SidoDB, SigunguDB, forecastDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
 
-  const pmOrFpm = daySwitch ? (pmSwitch ? "pm" : "fpm") : (pmSwitch ? "pmForecast" : "fpmForecast")
+  const pmOrFpm = isToday ? (isPm ? "pm" : "fpm") : (isPm ? "pmForecast" : "fpmForecast")
 
   const gradient = {
     property: pmOrFpm,
-    stops: daySwitch ?
+    stops: isToday ?
     [
       [0, '#565656'], //미세먼지 수치가 주어지지 않았을 때 회색
       [1, '#1C3FFD'], [2, '#1C3FFD'], [3, '#1C3FFD'], //파
@@ -90,7 +90,7 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
   const onClick = (event) => {
     setCurrentLocation(null)
     const feature = event.features ? event.features[0] : null
-    if (!selectedSido && feature && daySwitch) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
+    if (!selectedSido && feature && isToday) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
       const [minLng, minLat, maxLng, maxLat] = bbox(feature);
       const vp = new WebMercatorViewport(viewport);
       const {longitude, latitude, zoom} = vp.fitBounds(
@@ -115,7 +115,7 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
       setIsZoomed(true)
       setSelectedSido(event.features[0].properties.sidonm)
       changeAddr(event.features[0].properties.sidonm)
-    } else if (feature && daySwitch) { changeAddr(event.features[0].properties.sgg_nm)}
+    } else if (feature && isToday) { changeAddr(event.features[0].properties.sgg_nm)}
   }
 
   //초기 줌 수치로 돌아오기

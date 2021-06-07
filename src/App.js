@@ -17,21 +17,21 @@ function App() {
   const [SigunguDB, setSigunguDB] = useState(null);
   const [forecastDB, setForecastDB] = useState(null);
 
-  const [pmSwitch, setPmSwitch] = useState(true)
-  const [daySwitch, setDaySwitch] = useState(true)
-  const [tabSwitch, setTabSwitch] = useState(true)
+  const [isPm, setIsPm] = useState(true)
+  const [isToday, setIsToday] = useState(true)
+  const [pmTabOn, setPmTabOn] = useState(true)
   const [addr, setAddr] = useState('');
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
 
   const swapPm = () =>{
-    setPmSwitch(!pmSwitch)
+    setIsPm(!isPm)
   }
   const swapDay = () =>{
-    setDaySwitch(!daySwitch)
+    setIsToday(!isToday)
   }
   const swapTab = () =>{
-    setTabSwitch(!tabSwitch)
+    setPmTabOn(!pmTabOn)
   }
   const changeAddr = (value) =>{
     //var sido_sigungu = AddrFilter(value);
@@ -101,15 +101,15 @@ function App() {
       <Layout>
         <Sider width={510} className="maparea">
           <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
-          <Map pmSwitch = {pmSwitch} daySwitch = {daySwitch} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
+          <Map isPm = {isPm} isToday = {isToday} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
         </Sider>
         <Content className="pmdataarea">
           <SearchBar changeAddr = {changeAddr}/>
           <SelectTab swapTab = {swapTab}/>
           <div>
             {
-              tabSwitch == true
-              ? <PmData addr = {addr} pm = {pm} fpm = {fpm} pmSwitch = {pmSwitch} daySwitch = {daySwitch}/>
+              pmTabOn == true
+              ? <PmData addr = {addr} pm = {pm} fpm = {fpm} isPm = {isPm} isToday = {isToday}/>
               : <News/>
             }
           </div>
