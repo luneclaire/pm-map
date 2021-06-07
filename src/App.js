@@ -25,27 +25,26 @@ function App() {
   const [fpm, setFpm] = useState('');
   const [dateTime, setDateTime] = useState('');
 
-  const swapIsPm = () =>{
+  const swapIsPm = () => {
     setIsPm(!isPm)
   }
-  const swapIsToDay = () =>{
+  const swapIsToDay = () => {
     setIsToday(!isToday)
   }
-  const swapPmTabOn = () =>{
+  const swapPmTabOn = () => {
     setPmTabOn(!pmTabOn)
   }
-  const changeAddr = (value) =>{
-    //var sido_sigungu = AddrFilter(value);
+  const changeAddr = (value) => {
     setAddr(value);
     var Addr = value;
     const split = Addr?.split(' ');
-    Addr.replace(' ', '');
-    if(Addr == split[0] || Addr == split[0] + ' '){ //sido만 검색
-      for(var i=0; i<SidoDB.length; i++){
-        if(split !== undefined && SidoDB[i].sidonm == split[0]){
-          setPm(SidoDB[i].pm);
-          setFpm(SidoDB[i].fpm);
-          setDateTime(SidoDB[i].dateTime)      
+    if(Addr.trim() === split[0]){ //sido만 검색
+      console.log('test')
+      for(var i=0; i<SidoDB.result.length; i++){
+        if(split !== undefined && SidoDB.result[i].sidonm === split[0]){
+          setPm(SidoDB.result[i].pm);
+          setFpm(SidoDB.result[i].fpm);
+          setDateTime(SidoDB[i].dateTime);
           break;
         }
         setPm(-1);
@@ -54,10 +53,11 @@ function App() {
       }
     }
     else{ //sigungu 검색
-      for(var i=0; i<SigunguDB.length; i++){
-        if(SigunguDB[i].sidonm == split[0] && SigunguDB[i].sigungunm == split[1]){
-          setPm(SigunguDB[i].pm);
-          setFpm(SigunguDB[i].fpm);
+      console.log('test2')
+      for(var i=0; i<SigunguDB.result.length; i++){
+        if(SigunguDB.result[i].sidonm === split[0] && SigunguDB.result[i].sigungunm === split[1]){
+          setPm(SigunguDB.result[i].pm);
+          setFpm(SigunguDB.result[i].fpm);
           setDateTime(SigunguDB[i].dateTime);
           break;
         }

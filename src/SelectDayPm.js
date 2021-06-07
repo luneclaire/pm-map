@@ -2,11 +2,9 @@ import { Radio } from 'antd';
 
 export function SelectDayPm(props) {
   	function onChangeIsToDay(e) {
-		console.log('Day radio checked:${e.target.value}');
 		props.swapIsToDay();
 	}
 	function onChangeIsPm(e) {
-		console.log('Pm radio checked:${e.target.value}');
 		props.swapIsPm();
 	}
 
