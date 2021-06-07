@@ -43,17 +43,15 @@
   pointer-events: none;
 }
 
-.newsarea{
-  font-size: x-large;
-  font-weight: bold;
-  margin-bottom: 50px;
-  color: blue;
+.search-bar{
+  width: 100%;
+  max-width: 400px;
 }
 
 .color-legend {
   position: absolute;
   top: 5.4%;
-  right: 15%;
+  right: 0;
   max-width: 320px;
   background: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -63,6 +61,35 @@
   color: black;
   outline: none;
   list-style-type: none;
+  text-align: right;
+}
+
+.datazone{
+  display: flex;
+  justify-content: center;
+}
+
+.datazone > *{
+  padding: 5%;
+}
+
+.news{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1%;
+}
+.news-title{
+  padding-left: 1em;
+  font-size: large;
+  font-weight: bold;
+}
+
+.news-desc{
+  padding-left: 1em;
+}
+
+.news-pubDate{
   text-align: right;
 }
 

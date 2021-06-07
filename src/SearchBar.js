@@ -1,6 +1,5 @@
 import { Input } from 'antd';
-import { PmData } from './PmData';
-import React, { useState, Component } from 'react';
+import React from 'react';
 
 const sido_sigungu = require('./data/sido_sigungu.json')
 function AddrFilter(input_addr){
@@ -43,7 +42,6 @@ export function SearchBar(props) {
     console.log(sido_sigungu);
     props.changeAddr(sido_sigungu);  
   }; // 검색창에 엔터 치면 value값으로 전송.
-  
   
   //onSearch = 검색버튼을 눌렀을 때
   return (
