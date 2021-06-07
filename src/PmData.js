@@ -10,14 +10,14 @@ export function DataZone(val){
 	else { return <AlertTwoTone twoToneColor = "#D90000" style={{fontSize: '400%'}}/> }
 }
 
-export function PmData({addr, pm, fpm, daySwitch}) {
+export function PmData({addr, pm, fpm, isToday}) {
 	return (
 		<div className="databox">
 			
 			<p style={{fontSize: 'xx-large', margin: '15px'}}>
 				{
 					addr == '' || addr == ' '
-					? (daySwitch ? <p>지역을 검색하거나 지도를 클릭하세요</p> : <p>내일 예보를 보고 계십니다.</p>)
+					? (isToday ? <p>지역을 검색하거나 지도를 클릭하세요</p> : <p>내일 예보를 보고 계십니다.</p>)
 					:
 					<>
 						<h1 style={{fontSize: 'x-large', margin: '15px'}}>위치: {addr}</h1>	
