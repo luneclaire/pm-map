@@ -18,6 +18,7 @@
 }
 
 .pmdataarea {
+  max-width: 660px;
   padding: 0px;
   margin: 10px;
 }
@@ -75,16 +76,18 @@
 
 .news{
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   padding: 1%;
 }
 .news-title{
-  padding-left: 1em;
   font-size: large;
   font-weight: bold;
 }
-
+.news-detail{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .news-desc{
   padding-left: 1em;
 }

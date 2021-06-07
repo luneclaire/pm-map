@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import sidoGeoJson from './data/Sido';
 import sigunguGeoJson from './data/Sigungu';
+import sidoBbox from './data/sidoBbox';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
 import bbox from '@turf/bbox'
@@ -12,7 +13,7 @@ import { ReactComponent as pin} from './icon/pin.svg'
 import axios from 'axios';
 import { ColorLegend } from './ColorLegend';
 
-export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, forecastDB} ) {
+export function Map( {pmSwitch, daySwitch, addr, changeAddr, SidoDB, SigunguDB, forecastDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
 
   const pmOrFpm = daySwitch ? (pmSwitch ? "pm" : "fpm") : (pmSwitch ? "pmForecast" : "fpmForecast")
@@ -43,7 +44,7 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
     features: sidoGeoJson.features.map(geo => {
       const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
-      const properties = sidoDBdata !== [] ? {
+      const properties = (sidoDBdata !== []  && typeof sidoDBdata[0] !== undefined) ? {
         ...geo.properties,
         pm: (sidoDBdata[0].pm)/10,
         fpm: (sidoDBdata[0].fpm)/10,
@@ -78,13 +79,48 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
   } : { sigunguGeoJson }
 
   //초기 viewport setting
-  const [ viewport, setViewport ] = useState({
+  const initalViewport = {
     latitude: 35.905546,
     longitude: 127.935763,
     width: '500px',
     height: '600px',
     zoom: 5.9,
-    });
+  }
+  const [ viewport, setViewport ] = useState(initalViewport);
+
+  useEffect(() => {
+    if (!daySwitch) { 
+      zoomOut()
+    }
+    if (addr?.length > 2 ) {
+      const splitAddr = addr.split(' ')
+
+      const findSidoBbox = sidoBbox.filter(sido => sido.name === splitAddr[0])
+
+      const [minLng, minLat, maxLng, maxLat] = findSidoBbox[0].bbox
+      const vp = new WebMercatorViewport(viewport);
+      const {longitude, latitude, zoom} = vp.fitBounds(
+        [
+          [minLng, minLat],
+          [maxLng, maxLat]
+        ],
+        { padding: 40 }
+      );
+
+      setViewport({ 
+        ...viewport,
+        longitude,
+        latitude,
+        zoom,
+        transitionInterpolator: new LinearInterpolator(),
+        transitionDuration: 500
+      })
+
+      setIsZoomed(true)
+      setSelectedSido(splitAddr[0])
+
+    }
+  }, [addr, daySwitch])
 
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
@@ -175,7 +211,6 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
     return result[0].name
   }
 
-  const sidoBbox = require("./data/sidoBbox.json")
   const getBbox = async (sidoName) => {
     const result = sidoBbox.filter(({ name, bbox }) => {
         return name === sidoName
@@ -211,7 +246,9 @@ export function Map( {pmSwitch, daySwitch, changeAddr, SidoDB, SigunguDB, foreca
         ...viewport,
         longitude,
         latitude,
-        zoom
+        zoom,
+        transitionInterpolator: new LinearInterpolator(),
+        transitionDuration: 500
       })
 
       setIsZoomed(true)

@@ -9,7 +9,6 @@ export function News(){
         try{
             const response = await axios.get('./news')
             setNewsList(response.data)
-            console.log(response.data)
         } catch (error){
             console.log(error)
         }
@@ -19,20 +18,20 @@ export function News(){
   
   return(
     <div>
-      {newsList.map((news) => (
+      {newsList.map((news, index) => (
         <div className="news">
-            <img className = "news-image" src={news.thumbnail} style={{width:"20%", height:"20%"}}/>
-            <div>
-              <a className="news-title" href={news.link} target="_blank" rel="noopener noreferrer">
-                {news.title.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
-              </a>
+            <a className="news-title" href={news.link} target="_blank" rel="noopener noreferrer">
+              {news.title.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
+            </a>
+            <div className="news-detail">
+              <img className = "news-image" src={news.thumbnail} style={{width:"20%", height:"20%"}}/>
               <p className="news-desc">
                 {news.description.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
               </p>
+            </div>
               <div className="news-pubDate">
                 {news.pubDate.slice(0,16)}
               </div>
-            </div>
         </div>
       ))}
     </div>
