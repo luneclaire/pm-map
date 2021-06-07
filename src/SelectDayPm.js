@@ -1,13 +1,13 @@
 import { Radio } from 'antd';
 
-export function SelectDay(props) {
+export function SelectDayPm(props) {
   	function onChangeDay(e) {
 		console.log('Day radio checked:${e.target.value}');
-		props.swapDay();
+		props.swapIsToDay();
 	}
 	function onChangePm(e) {
 		console.log('Pm radio checked:${e.target.value}');
-		props.swapPm();
+		props.swapIsPm();
 	}
 
 	return (

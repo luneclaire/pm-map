@@ -2,7 +2,7 @@ import './App.css';
 import { Layout } from 'antd';
 import { Info } from './Info';
 import { PmData } from './PmData';
-import { SelectDay } from './SelectDay';
+import { SelectDayPm } from './SelectDayPm';
 import { Map } from './Map';
 import { SearchBar } from './SearchBar';
 import { News } from './News';
@@ -24,10 +24,10 @@ function App() {
   const [pm, setPm] = useState('');
   const [fpm, setFpm] = useState('');
 
-  const swapPm = () =>{
+  const swapIsPm = () =>{
     setIsPm(!isPm)
   }
-  const swapDay = () =>{
+  const swapIsToDay = () =>{
     setIsToday(!isToday)
   }
   const swapTab = () =>{
@@ -100,7 +100,7 @@ function App() {
       </Header>
       <Layout>
         <Sider width={510} className="maparea">
-          <SelectDay swapPm = {swapPm} swapDay = {swapDay}/>
+          <SelectDayPm swapIsPm = {swapIsPm} swapIsToDay = {swapIsToDay}/>
           <Map isPm = {isPm} isToday = {isToday} changeAddr = {changeAddr} SidoDB = {SidoDB} SigunguDB = {SigunguDB} forecastDB = {forecastDB}/>
         </Sider>
         <Content className="pmdataarea">
