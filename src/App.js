@@ -34,15 +34,10 @@ function App() {
     setPmTabOn(!pmTabOn)
   }
   const changeAddr = (value) =>{
-    //var sido_sigungu = AddrFilter(value);
     setAddr(value);
     var Addr = value;
-    console.log(Addr)
     const split = Addr?.split(' ');
-    Addr.replace(' ', '');
-    console.log(Addr)
-    console.log(split[0])
-    if(Addr == split[0] || Addr == split[0] + ' '){ //sido만 검색
+    if(Addr.trim() === split[0]){ //sido만 검색
       console.log('test')
       for(var i=0; i<SidoDB.result.length; i++){
         if(split !== undefined && SidoDB.result[i].sidonm == split[0]){
