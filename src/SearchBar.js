@@ -37,9 +37,7 @@ function AddrFilter(input_addr){
 export function SearchBar(props) {
   const { Search } = Input;
   const onSearch = (value) => {
-    console.log(value);
     var sido_sigungu = AddrFilter(value);
-    console.log(sido_sigungu);
     props.changeAddr(sido_sigungu);  
   }; // 검색창에 엔터 치면 value값으로 전송.
   
