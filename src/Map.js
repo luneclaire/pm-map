@@ -42,12 +42,12 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   const SidoDBGeo = SidoDB != null && forecastDB != null ? {
     type: 'FeatureCollection',
     features: sidoGeoJson.features.map(geo => {
-      const sidoDBdata = SidoDB.result.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
+      const sidoDBdata = SidoDB.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
       const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
       const properties = (sidoDBdata !== []  && typeof sidoDBdata[0] !== undefined) ? {
         ...geo.properties,
-        pm: (sidoDBdata[0].pm)/10,
-        fpm: (sidoDBdata[0].fpm)/10,
+        pm: Math.round((sidoDBdata[0].pm)/10),
+        fpm: Math.round((sidoDBdata[0].fpm)/10),
         pmForecast: (forecastDBdata[0].pm),
         fpmForecast: (forecastDBdata[0].fpm)
       } : { ...geo.properties, pm: -1, fpm: -1, pmForecast: forecastDBdata[0].pm, fpmForecast: forecastDBdata[0].fpm }
@@ -58,7 +58,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   const SigunguDBGeo = SigunguDB != null ? {
     type: 'FeatureCollection',
     features: sigunguGeoJson.features.map(geo => {
-      const sigunguDBdata = SigunguDB.result.filter( sigungu => {
+      const sigunguDBdata = SigunguDB.filter( sigungu => {
         const sggSplit = geo.properties.sgg_nm.split(' ')
         return sigungu.sigungunm === sggSplit[1] && sigungu.sidonm === sggSplit[0]
       } )
@@ -66,8 +66,8 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
         onlySGG: geo.properties.sgg_nm.split(' ')[1],
-        pm: (sigunguDBdata[0].pm)/10,
-        fpm: (sigunguDBdata[0].fpm)/10
+        pm: Math.round((sigunguDBdata[0].pm)/10),
+        fpm: Math.round((sigunguDBdata[0].fpm)/10)
       } : {
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
@@ -125,33 +125,13 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
     setCurrentLocation(null)
-    const feature = event.features ? event.features[0] : null
-    if (!selectedSido && feature && isToday) { //줌인된 상태에서는 주변 시도 골라도 이동되지 않게 함 (무조건 전체 줌 아웃 후 시도 클릭으로 줌 가능)
-      const [minLng, minLat, maxLng, maxLat] = bbox(feature);
-      const vp = new WebMercatorViewport(viewport);
-      const {longitude, latitude, zoom} = vp.fitBounds(
-        [
-          [minLng, minLat],
-          [maxLng, maxLat]
-        ],
-        { padding: 40 }
-      );
-
-      setViewport({ //
-        ...viewport,
-        longitude,
-        latitude,
-        zoom,
-        transitionInterpolator: new LinearInterpolator({
-          around: [event.offsetCenter.x, event.offsetCenter.y]
-        }),
-        transitionDuration: 500
-      })
-
-      setIsZoomed(true)
-      setSelectedSido(event.features[0].properties.sidonm)
+    const selectedSidoName = addr.split(' ')[0]
+    if (addr === '') {
       changeAddr(event.features[0].properties.sidonm)
-    } else if (feature && isToday) { changeAddr(event.features[0].properties.sgg_nm)}
+      setSelectedSido(event.features[0].properties.sidonm)
+    } else if (selectedSidoName === event.features[0].properties.sidonm) {
+      changeAddr(event.features[0].properties.sgg_nm)
+    }
   }
 
   //초기 줌 수치로 돌아오기
@@ -227,32 +207,11 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
       const sidoName = await nameMapping(address[0])
       const sigunguName = address[1]
 
-      const [minLng, minLat, maxLng, maxLat] = await getBbox(sidoName)
-      const vp = new WebMercatorViewport(viewport);
-      const {longitude, latitude, zoom} = vp.fitBounds(
-        [
-          [minLng, minLat],
-          [maxLng, maxLat]
-        ],
-        { padding: 40 }
-      );
-
       setCurrentLocation({
         longitude: currentLongitude,
         latitude: currentLatitude
       })
 
-      setViewport({ 
-        ...viewport,
-        longitude,
-        latitude,
-        zoom,
-        transitionInterpolator: new LinearInterpolator(),
-        transitionDuration: 500
-      })
-
-      setIsZoomed(true)
-      setSelectedSido(sidoName)
       changeAddr(sidoName+' '+sigunguName)
       return [sidoName, sigunguName]
     })
