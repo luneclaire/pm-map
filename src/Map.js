@@ -31,7 +31,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
     [
       [1, '#1C3FFD'], [2, '#87ae22'], [3, '#FFD10F'] // 내일 예보시 색상코드
     ]
-}
+  }
 
   const [isZoomed, setIsZoomed] = useState(false);
   const [hoverInfo, setHoverInfo] = useState(null);
@@ -42,7 +42,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   const SidoDBGeo = SidoDB != null && forecastDB != null ? {
     type: 'FeatureCollection',
     features: sidoGeoJson.features.map(geo => {
-      const sidoDBdata = SidoDB.filter( sido => { return sido.sidonm === geo.properties.sidonm} )
+      const sidoDBdata = SidoDB.data.filter( sido => { return sido.sidoName === geo.properties.sidonm} )
       const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
       const properties = (sidoDBdata !== []  && typeof sidoDBdata[0] !== undefined) ? {
         ...geo.properties,
@@ -58,16 +58,19 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   const SigunguDBGeo = SigunguDB != null ? {
     type: 'FeatureCollection',
     features: sigunguGeoJson.features.map(geo => {
-      const sigunguDBdata = SigunguDB.filter( sigungu => {
-        const sggSplit = geo.properties.sgg_nm.split(' ')
-        return sigungu.sigungunm === sggSplit[1] && sigungu.sidonm === sggSplit[0]
+      const sggSplit = geo.properties.sgg_nm.split(' ')
+      const sigungus = SigunguDB.find( data => {
+        return data.sidoName === sggSplit[0]
+      }).data
+      const sigunguDBdata = sigungus.find( sigungu => {
+        return sigungu.sigunguName === sggSplit[1]
       } )
-      const properties = (sigunguDBdata !== [] && typeof sigunguDBdata[0] !== "undefined") ? {
+      const properties = (sigunguDBdata !== [] && typeof sigunguDBdata !== "undefined") ? {
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
         onlySGG: geo.properties.sgg_nm.split(' ')[1],
-        pm: Math.round((sigunguDBdata[0].pm)/10),
-        fpm: Math.round((sigunguDBdata[0].fpm)/10)
+        pm: Math.round((sigunguDBdata.pm)/10),
+        fpm: Math.round((sigunguDBdata.fpm)/10)
       } : {
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
@@ -189,13 +192,6 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
         return abbrev === sidoName
     })
     return result[0].name
-  }
-
-  const getBbox = async (sidoName) => {
-    const result = sidoBbox.filter(({ name, bbox }) => {
-        return name === sidoName
-    })
-    return result[0].bbox
   }
 
   // 현재 위치 가져오기
