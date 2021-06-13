@@ -1,31 +1,34 @@
 const axios = require('axios')
 const dayjs = require('dayjs')
+const qs = require('qs');
 
-// const serviceKey = 'Vtgkpa6WDF3%2BrOl7MToep50Jv3ahvFmqv6fcyko7soqyfZTFQTAFCQOiSK7Is0Wud7kLs4WyEzTcRTl3Esbxbg%3D%3D'
-const serviceKey = 'JzAjCMSkJKezoT9lpf%2FilQVb5808SC4cc7FU83dGJdO939K0UWHTn%2Bj2J6l%2FaxyCityrbAoQLJIV3w8x2hdqmQ%3D%3D'
-// const serviceKey = 'dC0Mal22V6WU0%2BFhs1pxRYGtxCk3gyIU84PpYDzSQJgl1A86QtlR5iPgjNHnNMPjEn55t7YbHljqayKmwclVlg%3D%3D'
+const sidoNameData = require("./sidoNameMapping.json")
+
+const serviceKey = 'JzAjCMSkJKezoT9lpf/ilQVb5808SC4cc7FU83dGJdO939K0UWHTn+j2J6l/axyCityrbAoQLJIV3w8x2hdqmQ=='
+// const serviceKey = 'dC0Mal22V6WU0+Fhs1pxRYGtxCk3gyIU84PpYDzSQJgl1A86QtlR5iPgjNHnNMPjEn55t7YbHljqayKmwclVlg=='
+// const serviceKey = 'G1746kXbwSMNDX+Z+Pl9Fwhq9i7t8+8NvV5vVc0BFactDgkkZEQxlfEguygCbXWlGmtY+cyHh/Nm/S0qq5yuZw=='
 
 async function requestApi(searchDate) {
     const today = searchDate.format('YYYY-MM-DD')
 
     const url = 'http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMinuDustFrcstDspth?'
-    var queryParams = encodeURIComponent('ServiceKey') + '=' + serviceKey
-    queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1')
-    queryParams += '&' + encodeURIComponent('returnType') + '=' + encodeURIComponent('json') //josn으로 받기
-    queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('100')
+    const queryParams = {
+        ServiceKey: serviceKey,
+        returnType: 'json',
+        pageNo : 1,
+        numOfRows: 100, 
+        searchDate: today,
+        ver: '1.0'
+    }
 
-    queryParams += '&' + encodeURIComponent('searchDate') + '=' + encodeURIComponent(today)
-    queryParams += '&' + encodeURIComponent('ver') + '=' + encodeURIComponent('1.0')
-
-    const uri = url + queryParams
-    // console.log(uri)
-    var { data } = await axios.get(uri)
+    const uri = url + qs.stringify(queryParams)
+    
+    let { data } = await axios.get(uri)
     data = data.response.body.items
     return data
 }
 
 // 시도명 축약형 매핑(서울 -> 서울특별시)
-const sidoNameData = require("./sidoNameMapping.json")
 const nameMapping = (sidoName) => {
     const result = sidoNameData.filter(({ name, abbrev }) => {
         return abbrev == sidoName
@@ -39,7 +42,7 @@ const nameMapping = (sidoName) => {
 
 
 async function getData() {
-    var searchDate = dayjs()
+    let searchDate = dayjs()
     
     // 예보는 하루 4번 발표(5시,11시,17시,23시) -> 5시 이전에 api호출할 시 전날 데이터 조회.
     const tomorrow = searchDate.add(1, 'day').format('YYYY-MM-DD')
@@ -55,11 +58,11 @@ async function getData() {
 
     // 예보 등급은 '서울: 나쁨,  제주: 나쁨, 전남: 나쁨 …' 형태의 string이라 
     // object로 수정 -> {'서울':'나쁨', '제주':'나쁨', ...}
-    var sidoNames = []
-    var pmResult = []
-    var fpmResult = []
+    let sidoNames = []
+    let pmResult = []
+    let fpmResult = []
     pmTomorrow.informGrade.split(',').forEach(async (val, index, arr) => {
-        var [sido, pm] = val.split(':')
+        let [sido, pm] = val.split(':')
         sidoNames.push(nameMapping(sido.trim()))
         pmResult.push(pm.trim())
     })
@@ -67,16 +70,16 @@ async function getData() {
     const fpmTomorrow = data.filter((item) => {
         return item.informCode === 'PM25' & item.informData === tomorrow
     })[0]
-    var fpmResult = []
+
     fpmTomorrow.informGrade.split(',').forEach(async (val, index, arr) => {
-        var [sido, fpm] = val.split(':')
+        let [sido, fpm] = val.split(':')
         fpmResult.push(fpm.trim())
     })
 
-    var result = []
+    let result = []
     const steps = ["좋음", "보통", "나쁨"]
     sidoNames.forEach((sido, idx)=>{
-        var sidoname = sido
+        let sidoname = sido
         const dateTime = pmTomorrow.dataTime.slice(0,-4)+":00"
         const pm = steps.indexOf(pmResult[idx])+1
         const fpm = steps.indexOf(fpmResult[idx])+1
