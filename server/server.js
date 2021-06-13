@@ -26,14 +26,12 @@ connection.once('open', function callback() {
   })
 })
 
-// xx시 10분에 DB업데이트 
-var j = schedule.scheduleJob('0 15 * * * *', function () {
+var j = schedule.scheduleJob('0 20 * * * *', function () {
   getAllSidoData()
     .then(() => { console.log('sido update complete') })
   getAllSiGunGuData()
     .then(() => { console.log('sigungu update complete') })
 })
-
 const api = require('./routes/index')
 app.use('/', api)
 

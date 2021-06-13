@@ -1,27 +1,51 @@
 var express = require('express')
 var router = express.Router()
-var axios = require('axios');
-
 const dayjs = require('dayjs')
 
 const Sido = require("../models/sido")
+const newSido = require("../models/newSido")
 const Sigungu = require("../models/sigungu")
+const newSigungu = require("../models/newSigungu")
+
 const { getForecast } = require("./getForecast");
 const { getNews } = require('./getNews');
 
-async function findDB(DB, sido, now) {
-    const dateTime = now.format('YYYY-MM-DD HH:00');
+const getDateTime = (now) => {
+    let dateTime = now.format('YYYY-MM-DD HH:00')
+    if(now.get('hour') === 0 ){
+        dateTime = now.subtract(1, 'day').format('YYYY-MM-DD 24:00')
+    }
+    return dateTime
+}
+
+async function findSidoDB(DB, now) {
+    const dateTime = getDateTime(now)
+    const result = await DB.find({
+        "dateTime": dateTime,
+    },{ _id: 0, "__v": 0 }).exec()
+
+    if (result.length > 0) {
+        return result[0]
+    } else {
+        const before = now.subtract(1, 'hour')
+        return findSidoDB(DB, before)
+    }
+}
+
+async function findSigunguDB(DB, sido, now) {
+    const dateTime = getDateTime(now)
     const result = await DB.find({ 
         "dateTime": dateTime,
-        "sidonm": sido
+        "sidoName": sido
     },{ _id: 0, "__v": 0 }).exec()
     if (result.length > 0) {
         return result
     } else {
         const before = now.subtract(1, 'hour')
-        return findDB(DB, sido, before)
+        return findSigunguDB(DB, sido, before)
     }
 }
+
 const sidoNames = [
     '서울특별시',
     '부산광역시',
@@ -43,23 +67,27 @@ const sidoNames = [
 
 router.get('/sido', async function (req, res, next) {
     const now = dayjs()
-    let result = []
-    for(const sidoName of sidoNames){
-        const sidoData = await findDB(Sido, sidoName, now)
-        result.push(...sidoData)
-    }
+    const start = new Date()
+    const result = await findSidoDB(newSido, now)
+    const end = new Date()
+    console.log(end - start)
     res.send(result)
 })
 
-
 router.get('/sigungu', async function (req, res, next) {
     const now = dayjs()
-    let result = []
-    for(const sidoName of sidoNames){
-        const sigunguData = await findDB(Sigungu, sidoName, now)
-        result.push(...sigunguData)
+    const start = new Date()
+    const allSigunguData = async () => {
+        let result = []
+        for(const sidoName of sidoNames){
+            const sigunguData = await findSigunguDB(newSigungu, sidoName, now)
+            result.push(...sigunguData)
+        }
+        return result
     }
-    res.send(result)
+    res.send(await allSigunguData())
+    const end = new Date()
+    console.log(end - start)
 })
 
 router.get('/forecast', async function (req, res, next) {

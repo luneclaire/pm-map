@@ -31,7 +31,9 @@ export function PmData({addr, pm, fpm, dateTime, isToday}) {
 								{fpm !== -1 ? <p>초미세먼지: {fpm}</p> : <p>초미세먼지</p>}
 							</div>
 						</div>
-						<div style={{fontSize: 'small'}}>측정일시:{dateTime}</div>
+						<div style={{fontSize: 'small'}}>
+							{pm !== -1 && fpm !== -1 ? <p>측정일시:{dateTime}</p> : '' }
+						</div>
 					</>
 				}
 			</p>
