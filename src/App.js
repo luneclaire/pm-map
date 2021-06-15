@@ -51,10 +51,10 @@ function App() {
       const sigungus = SigunguDB.find( data => {
         return data.sidoName === split[0]
       })
-      for(var i=0; i<sigungus.data.length; i++){
-        if(sigungus.data[i].sigunguName === split[1]){
-          setPm(sigungus.data[i].pm);
-          setFpm(sigungus.data[i].fpm);
+      for(var j=0; j<sigungus.data.length; j++){
+        if(sigungus.data[j].sigunguName === split[1]){
+          setPm(sigungus.data[j].pm);
+          setFpm(sigungus.data[j].fpm);
           setDateTime(sigungus.dateTime);
           break;
         }

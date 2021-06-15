@@ -17,7 +17,7 @@ function AddrFilter(input_addr){
         temp_addr = temp_addr.replace(sido_sigungu[i].name[0], '').replace(sido_sigungu[i].name[1], '').replace(' ', '');
       }
 
-      inner : for(var j = 0; j<sido_sigungu[i].regions.length; j++){
+      for(var j = 0; j<sido_sigungu[i].regions.length; j++){
         if(temp_addr.includes(sido_sigungu[i].regions[j]) || //종로구
           ((temp_addr.includes(sido_sigungu[i].regions[j].substr(0, sido_sigungu[i].regions[j].length-1))) && //종로->종로구
           (sido_sigungu[i].regions[j].length-1 > 1))){ //서구,중구... 거르기. 놔두면 서귀포도 서구가 인식함.
@@ -34,11 +34,11 @@ function AddrFilter(input_addr){
   return sido + ' ' + sigungu;
 }
 
-export function SearchBar(props) {
+export function SearchBar({changeAddr}) {
   const { Search } = Input;
   const onSearch = (value) => {
     var sido_sigungu = AddrFilter(value);
-    props.changeAddr(sido_sigungu);  
+    changeAddr(sido_sigungu);  
   }; // 검색창에 엔터 치면 value값으로 전송.
   
   //onSearch = 검색버튼을 눌렀을 때
