@@ -8,6 +8,8 @@ function AddrFilter(input_addr){
   var is_sido = false; //성북구, 서구 같이 앞을 빼고 뒤만 친 경우 처리
   var temp_addr = '';
   outer : for(let i = 0; i<17; i++){
+    sido = '';
+    sigungu = '';
     temp_addr = input_addr; //only 시군구 처리용
     if(input_addr.includes(sido_sigungu[i].name[0]) || input_addr.includes(sido_sigungu[i].name[1])){
       sido = sido_sigungu[i].name[0];
@@ -26,9 +28,9 @@ function AddrFilter(input_addr){
         ((temp_addr.includes(sido_sigungu[i].regions[j].substr(0, sido_sigungu[i].regions[j].length-1))) && //종로->종로구
         (sido_sigungu[i].regions[j].length-1 > 1))){ //서구,중구... 거르기. 놔두면 서귀포도 서구가 인식함.
           sigungu = sido_sigungu[i].regions[j];
-          if(sido === '' && temp_addr === input_addr){ //시군구만 입력 시
+          if(sido === '' && !is_sido && !input_addr.includes(' ')){ //시군구만 입력 시
             sido = sido_sigungu[i].name[0];
-            //break outer; //break outer을 놔두면 광주 서구도 부산 서구로 인식해서 빠져버림
+            break outer; //break outer을 놔두면 광주 서구도 부산 서구로 인식해서 빠져버림
           }
           if(is_sido)
             break outer;
@@ -49,7 +51,7 @@ export function SearchBar({changeAddr}) {
   //onSearch = 검색버튼을 눌렀을 때
   return (
     <div style={{padding: '10px'}}>
-      <Search placeholder="xx시 xx동 형태로 검색해주세요" onSearch={onSearch} style={{ width: 400, alignSelf: 'center'}}/>
+      <Search placeholder="xx도 xx시 혹은 xx시 xx구 형태로 검색해주세요" onSearch={onSearch} style={{ width: 400, alignSelf: 'center'}}/>
     </div>
   );
 }
