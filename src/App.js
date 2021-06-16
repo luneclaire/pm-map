@@ -31,6 +31,8 @@ function App() {
     setIsToday(!isToday)
   }
   const changeAddr = (value) => {
+    if(value === undefined)
+      value = ' ';
     setAddr(value);
     var Addr = value;
     const split = Addr?.split(' ');
