@@ -7,7 +7,7 @@ function AddrFilter(input_addr){
   var sigungu = '';
   var is_sido = false;
   var temp_addr = input_addr;
-  outer : for(var i = 0; i<17; i++){
+  outer : for(let i = 0; i<17; i++){
     if(input_addr.includes(sido_sigungu[i].name[0]) || input_addr.includes(sido_sigungu[i].name[1])){
       sido = sido_sigungu[i].name[0];
       is_sido = true; //성북구, 서구 같이 앞을 빼고 뒤만 친 경우 처리
@@ -17,7 +17,7 @@ function AddrFilter(input_addr){
         temp_addr = temp_addr.replace(sido_sigungu[i].name[0], '').replace(sido_sigungu[i].name[1], '').replace(' ', '');
       }
 
-      for(var j = 0; j<sido_sigungu[i].regions.length; j++){
+      for(let j = 0; j<sido_sigungu[i].regions.length; j++){
         if(temp_addr.includes(sido_sigungu[i].regions[j]) || //종로구
           ((temp_addr.includes(sido_sigungu[i].regions[j].substr(0, sido_sigungu[i].regions[j].length-1))) && //종로->종로구
           (sido_sigungu[i].regions[j].length-1 > 1))){ //서구,중구... 거르기. 놔두면 서귀포도 서구가 인식함.

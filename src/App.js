@@ -35,7 +35,7 @@ function App() {
     var Addr = value;
     const split = Addr?.split(' ');
     if(Addr.trim() === split[0]){ //sido만 검색
-      for(var i=0; i<SidoDB.data.length; i++){
+      for(let i=0; i<SidoDB.data.length; i++){
         if(split !== undefined && SidoDB.data[i].sidoName === split[0]){
           setPm(SidoDB.data[i].pm);
           setFpm(SidoDB.data[i].fpm);
@@ -51,10 +51,10 @@ function App() {
       const sigungus = SigunguDB.find( data => {
         return data.sidoName === split[0]
       })
-      for(var j=0; j<sigungus.data.length; j++){
-        if(sigungus.data[j].sigunguName === split[1]){
-          setPm(sigungus.data[j].pm);
-          setFpm(sigungus.data[j].fpm);
+      for(let i=0; i<sigungus.data.length; i++){
+        if(sigungus.data[i].sigunguName === split[1]){
+          setPm(sigungus.data[i].pm);
+          setFpm(sigungus.data[i].fpm);
           setDateTime(sigungus.dateTime);
           break;
         }
