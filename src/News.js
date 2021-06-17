@@ -24,7 +24,7 @@ export function News(){
               {news.title.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
             </a>
             <div className="news-detail">
-              <img className = "news-image" src={news.thumbnail} style={{width:"20%", height:"20%"}}/>
+              <img className = "news-image" src={news.thumbnail} alt="thumbnail" style={{width:"20%", height:"20%"}}/>
               <p className="news-desc">
                 {news.description.replaceAll('<b>', '').replaceAll('</b>', '').replaceAll('&quot;', '')}
               </p>

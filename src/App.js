@@ -30,12 +30,13 @@ function App() {
   const swapIsToDay = () => {
     setIsToday(!isToday)
   }
-  const changeAddr = (value) => {
-    setAddr(value);
-    var Addr = value;
-    const split = Addr?.split(' ');
-    if(Addr.trim() === split[0]){ //sido만 검색
-      for(var i=0; i<SidoDB.data.length; i++){
+  const changeAddr = (newAddr) => {
+    if(newAddr === undefined)
+      newAddr = ' ';
+    setAddr(newAddr);
+    const split = newAddr?.split(' ');
+    if(newAddr.trim() === split[0]){ //sido만 검색
+      for(let i=0; i<SidoDB.data.length; i++){
         if(split !== undefined && SidoDB.data[i].sidoName === split[0]){
           setPm(SidoDB.data[i].pm);
           setFpm(SidoDB.data[i].fpm);
@@ -51,7 +52,7 @@ function App() {
       const sigungus = SigunguDB.find( data => {
         return data.sidoName === split[0]
       })
-      for(var i=0; i<sigungus.data.length; i++){
+      for(let i=0; i<sigungus.data.length; i++){
         if(sigungus.data[i].sigunguName === split[1]){
           setPm(sigungus.data[i].pm);
           setFpm(sigungus.data[i].fpm);

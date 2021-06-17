@@ -6,7 +6,6 @@ import sigunguGeoJson from './data/Sigungu';
 import sidoBbox from './data/sidoBbox';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
-import bbox from '@turf/bbox'
 import { Icon } from '@ant-design/compatible';
 import { ReactComponent as location} from './icon/location.svg' 
 import { ReactComponent as pin} from './icon/pin.svg' 
