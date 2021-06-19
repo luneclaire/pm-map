@@ -1,11 +1,11 @@
 import './App.css';
 import { Layout, Tabs } from 'antd';
-import { Info } from './Info';
-import { PmData } from './PmData';
-import { SelectDayPm } from './SelectDayPm';
-import { Map } from './Map';
-import { SearchBar } from './SearchBar';
-import { News } from './News';
+import { Info } from './component/Info';
+import { PmData } from './component/PmData';
+import { SelectDayPm } from './component/SelectDayPm';
+import { Map } from './component/Map';
+import { SearchBar } from './component/SearchBar';
+import { News } from './component/News';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
