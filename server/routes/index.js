@@ -1,27 +1,29 @@
 var express = require('express')
 var router = express.Router()
-var axios = require('axios');
-
 const dayjs = require('dayjs')
 
 const Sido = require("../models/sido")
+const newSido = require("../models/newSido")
 const Sigungu = require("../models/sigungu")
+const newSigungu = require("../models/newSigungu")
+
 const { getForecast } = require("./getForecast");
 const { getNews } = require('./getNews');
 
-async function findDB(DB, sido, now) {
-    const dateTime = now.format('YYYY-MM-DD HH:00');
-    const result = await DB.find({ 
-        "dateTime": dateTime,
-        "sidonm": sido
-    },{ _id: 0, "__v": 0 }).exec()
-    if (result.length > 0) {
-        return result
-    } else {
-        const before = now.subtract(1, 'hour')
-        return findDB(DB, sido, before)
-    }
+async function findSidoDB(DB) {
+    const result = DB.findOne({},{ _id: 0, "__v": 0 },{
+        sort: {'dateTime': -1}
+    }).exec()
+    return result
 }
+
+async function findSigunguDB(DB, query) {
+    const result = await DB.findOne(query,{ _id: 0, "__v": 0 },{
+        sort: {'dateTime': -1}
+    }).exec()
+    return result
+}
+
 const sidoNames = [
     '서울특별시',
     '부산광역시',
@@ -42,24 +44,22 @@ const sidoNames = [
     '제주특별자치도']
 
 router.get('/sido', async function (req, res, next) {
-    const now = dayjs()
-    let result = []
-    for(const sidoName of sidoNames){
-        const sidoData = await findDB(Sido, sidoName, now)
-        result.push(...sidoData)
-    }
+    const result = await findSidoDB(newSido, {})
     res.send(result)
 })
 
-
 router.get('/sigungu', async function (req, res, next) {
-    const now = dayjs()
-    let result = []
-    for(const sidoName of sidoNames){
-        const sigunguData = await findDB(Sigungu, sidoName, now)
-        result.push(...sigunguData)
+    const allSigunguData = async () => {
+        let result = []
+        for(const sidoName of sidoNames){
+            const sigunguData = await findSigunguDB(newSigungu, {
+                'sidoName' : sidoName
+            })
+            result.push(sigunguData)
+        }
+        return result
     }
-    res.send(result)
+    res.send(await allSigunguData())
 })
 
 router.get('/forecast', async function (req, res, next) {
