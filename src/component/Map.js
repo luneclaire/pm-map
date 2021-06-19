@@ -1,14 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import sidoGeoJson from './data/Sido';
-import sigunguGeoJson from './data/Sigungu';
-import sidoBbox from './data/sidoBbox';
+import sidoGeoJson from '.././data/Sido';
+import sigunguGeoJson from '.././data/Sigungu';
+import sidoBbox from '.././data/sidoBbox';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
 import { Icon } from '@ant-design/compatible';
-import { ReactComponent as location} from './icon/location.svg' 
-import { ReactComponent as pin} from './icon/pin.svg' 
+import { ReactComponent as location} from '.././icon/location.svg' 
+import { ReactComponent as pin} from '.././icon/pin.svg' 
 import axios from 'axios';
 import { ColorLegend } from './ColorLegend';
 
@@ -185,7 +185,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   }
 
   // 시도명 매핑
-  const sidoNameData = require("./data/sidoNameMapping.json")
+  const sidoNameData = require("../data/sidoNameMapping.json")
   const nameMapping = async (sidoName) => {
     const result = sidoNameData.filter(({ name, abbrev }) => {
         return abbrev === sidoName
