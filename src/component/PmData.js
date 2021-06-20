@@ -14,7 +14,7 @@ export function PmData({addr, pm, fpm, dateTime, isToday}) {
 	return (
 		<div className="databox">
 			
-			<p style={{fontSize: 'xx-large', margin: '15px'}}>
+			<div style={{fontSize: 'xx-large', margin: '15px'}}>
 				{
 					addr === '' || addr === ' '
 					? (isToday ? <p>지역을 검색하거나 지도를 클릭하세요</p> :
@@ -37,7 +37,7 @@ export function PmData({addr, pm, fpm, dateTime, isToday}) {
 						</div>
 					</>
 				}
-			</p>
+			</div>
 		</div>
 	);
 }
