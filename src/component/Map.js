@@ -1,15 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import ReactMapGL, { Layer, Source, LinearInterpolator, WebMercatorViewport, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import sidoGeoJson from './data/Sido';
-import sigunguGeoJson from './data/Sigungu';
-import sidoBbox from './data/sidoBbox';
+import sidoGeoJson from '.././data/Sido';
+import sigunguGeoJson from '.././data/Sigungu';
+import sidoBbox from '.././data/sidoBbox';
 import { Button } from 'antd';
 import { ZoomOutOutlined } from '@ant-design/icons';
-import bbox from '@turf/bbox'
 import { Icon } from '@ant-design/compatible';
-import { ReactComponent as location} from './icon/location.svg' 
-import { ReactComponent as pin} from './icon/pin.svg' 
+import { ReactComponent as location} from '.././icon/location.svg' 
+import { ReactComponent as pin} from '.././icon/pin.svg' 
 import axios from 'axios';
 import { ColorLegend } from './ColorLegend';
 
@@ -46,8 +45,8 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
       const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
       const properties = (sidoDBdata !== []  && typeof sidoDBdata[0] !== undefined) ? {
         ...geo.properties,
-        pm: Math.round((sidoDBdata[0].pm)/10),
-        fpm: Math.round((sidoDBdata[0].fpm)/10),
+        pm: Math.ceil((sidoDBdata[0].pm)/10),
+        fpm: Math.ceil((sidoDBdata[0].fpm)/10),
         pmForecast: (forecastDBdata[0].pm),
         fpmForecast: (forecastDBdata[0].fpm)
       } : { ...geo.properties, pm: -1, fpm: -1, pmForecast: forecastDBdata[0].pm, fpmForecast: forecastDBdata[0].fpm }
@@ -69,8 +68,8 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
         onlySGG: geo.properties.sgg_nm.split(' ')[1],
-        pm: Math.round((sigunguDBdata.pm)/10),
-        fpm: Math.round((sigunguDBdata.fpm)/10)
+        pm: Math.ceil((sigunguDBdata.pm)/10),
+        fpm: Math.ceil((sigunguDBdata.fpm)/10)
       } : {
         ...geo.properties,
         sidonm: geo.properties.sgg_nm.split(' ')[0],
@@ -186,7 +185,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   }
 
   // 시도명 매핑
-  const sidoNameData = require("./data/sidoNameMapping.json")
+  const sidoNameData = require("../data/sidoNameMapping.json")
   const nameMapping = async (sidoName) => {
     const result = sidoNameData.filter(({ name, abbrev }) => {
         return abbrev === sidoName
