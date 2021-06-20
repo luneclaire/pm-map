@@ -236,7 +236,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
             id="data"
             type="fill"
             paint={
-              {'fill-color': gradient, "fill-opacity": 0.4}}
+              {'fill-color': gradient, "fill-opacity": 0.4, 'fill-outline-color': '#424242'}}
             filter={['==', 'sidonm', selectedSido]}
           />
           }
