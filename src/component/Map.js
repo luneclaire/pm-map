@@ -11,6 +11,7 @@ import { ReactComponent as location} from '.././icon/location.svg'
 import { ReactComponent as pin} from '.././icon/pin.svg' 
 import axios from 'axios';
 import { ColorLegend } from './ColorLegend';
+import { getSidoData, getSigunguData } from '../util'
 
 export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, forecastDB} ) {
   const MAP_TOKEN = 'pk.eyJ1IjoibHVuZWNsYWlyZSIsImEiOiJja3A2dzRkYnAwMDJtMnBwYW1pbHV2aXN1In0.XDowr_anEYxEmHwwFqqVyA';
@@ -41,15 +42,15 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
   const SidoDBGeo = SidoDB != null && forecastDB != null ? {
     type: 'FeatureCollection',
     features: sidoGeoJson.features.map(geo => {
-      const sidoDBdata = SidoDB.data.filter( sido => { return sido.sidoName === geo.properties.sidonm} )
-      const forecastDBdata = forecastDB.filter( sido => { return sido.sidoName === geo.properties.sidonm})
-      const properties = (sidoDBdata !== []  && typeof sidoDBdata[0] !== undefined) ? {
+      const sidoData = getSidoData(SidoDB.data, geo.properties.sidonm)
+      const forecastData = getSidoData(forecastDB, geo.properties.sidonm)
+      const properties = {
         ...geo.properties,
-        pm: Math.ceil((sidoDBdata[0].pm)/10),
-        fpm: Math.ceil((sidoDBdata[0].fpm)/10),
-        pmForecast: (forecastDBdata[0].pm),
-        fpmForecast: (forecastDBdata[0].fpm)
-      } : { ...geo.properties, pm: -1, fpm: -1, pmForecast: forecastDBdata[0].pm, fpmForecast: forecastDBdata[0].fpm }
+        pm: Math.ceil((sidoData[0])/10),
+        fpm: Math.ceil((sidoData[1])/10),
+        pmForecast: (forecastData[0]),
+        fpmForecast: (forecastData[1])
+      }
       return {...geo, properties}
     })
   } : { sidoGeoJson }
@@ -58,24 +59,14 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
     type: 'FeatureCollection',
     features: sigunguGeoJson.features.map(geo => {
       const sggSplit = geo.properties.sgg_nm.split(' ')
-      const sigungus = SigunguDB.find( data => {
-        return data.sidoName === sggSplit[0]
-      }).data
-      const sigunguDBdata = sigungus.find( sigungu => {
-        return sigungu.sigunguName === sggSplit[1]
-      } )
-      const properties = (sigunguDBdata !== [] && typeof sigunguDBdata !== "undefined") ? {
+      const sigunguData = getSigunguData(SigunguDB, sggSplit[0], sggSplit[1])
+      const properties = {
         ...geo.properties,
-        sidonm: geo.properties.sgg_nm.split(' ')[0],
-        onlySGG: geo.properties.sgg_nm.split(' ')[1],
-        pm: Math.ceil((sigunguDBdata.pm)/10),
-        fpm: Math.ceil((sigunguDBdata.fpm)/10)
-      } : {
-        ...geo.properties,
-        sidonm: geo.properties.sgg_nm.split(' ')[0],
-        onlySGG: geo.properties.sgg_nm.split(' ')[1],
-        pm: -1,
-        fpm: -1 }
+        sidonm: sggSplit[0],
+        onlySGG: sggSplit[1],
+        pm: Math.ceil((sigunguData[0])/10),
+        fpm: Math.ceil((sigunguData[1])/10)
+      }
       return {...geo, properties}
     })
   } : { sigunguGeoJson }
@@ -94,7 +85,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
     if (!isToday) { 
       zoomOut()
     }
-    if (addr?.length > 2 ) {
+    else if (addr?.length > 2 ) {
       const splitAddr = addr.split(' ')
 
       const findSidoBbox = sidoBbox.filter(sido => sido.name === splitAddr[0])
@@ -126,13 +117,15 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
 
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
-    setCurrentLocation(null)
-    const selectedSidoName = addr.split(' ')[0]
-    if (addr === '') {
-      changeAddr(event.features[0].properties.sidonm)
-      setSelectedSido(event.features[0].properties.sidonm)
-    } else if (selectedSidoName === event.features[0].properties.sidonm) {
-      changeAddr(event.features[0].properties.sgg_nm)
+    if (isToday) {
+      setCurrentLocation(null)
+      const selectedSidoName = addr.split(' ')[0]
+      if (addr === '') {
+        changeAddr(event.features[0].properties.sidonm)
+        setSelectedSido(event.features[0].properties.sidonm)
+      } else if (selectedSidoName === event.features[0].properties.sidonm) {
+        changeAddr(event.features[0].properties.sgg_nm)
+      }
     }
   }
 
