@@ -8,6 +8,7 @@ import { SearchBar } from './component/SearchBar';
 import { News } from './component/News';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getSidoData, getSigunguData } from './util';
 
 function App() {
   const { Header, Footer, Sider, Content } = Layout;
@@ -36,33 +37,16 @@ function App() {
     setAddr(newAddr);
     const split = newAddr?.split(' ');
     if(newAddr.trim() === split[0]){ //sido만 검색
-      for(let i=0; i<SidoDB.data.length; i++){
-        if(split !== undefined && SidoDB.data[i].sidoName === split[0]){
-          setPm(SidoDB.data[i].pm);
-          setFpm(SidoDB.data[i].fpm);
-          setDateTime(SidoDB.dateTime);
-          break;
-        }
-        setPm(-1);
-        setFpm(-1);
-        setDateTime('');
-      }
+      const sidoData = getSidoData(SidoDB.data, split[0])
+      setPm(sidoData[0])
+      setFpm(sidoData[1])
+      setDateTime(SidoDB.dateTime)
     }
     else{ //sigungu 검색
-      const sigungus = SigunguDB.find( data => {
-        return data.sidoName === split[0]
-      })
-      for(let i=0; i<sigungus.data.length; i++){
-        if(sigungus.data[i].sigunguName === split[1]){
-          setPm(sigungus.data[i].pm);
-          setFpm(sigungus.data[i].fpm);
-          setDateTime(sigungus.dateTime);
-          break;
-        }
-        setPm(-1);
-        setFpm(-1);
-        setDateTime('');
-      }
+      const sigunguData = getSigunguData(SigunguDB, split[0], split[1])
+      setPm(sigunguData[0])
+      setFpm(sigunguData[1])
+      setDateTime(SigunguDB.dateTime)
     }
   }
 
