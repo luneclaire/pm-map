@@ -1,12 +1,18 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var sigunguSchema = new Schema({
-    dateTime : 'string',
-    sidonm: 'string',
-    sigungunm: 'string',
+const dataSchema = new Schema({
+    sigunguName : 'string',
     pm : 'number',
     fpm : 'number'
 })
 
-module.exports = mongoose.model('Sigungu', sigunguSchema);
+const sigunguSchema = new Schema({
+    dateTime : {type: String, required:true},
+    sidoName: {type: String, required:true},
+    data : [dataSchema]
+})
+
+sigunguSchema.index({ dateTime: -1, sidoName: 1 });
+
+module.exports = mongoose.model('sigungu', sigunguSchema);
