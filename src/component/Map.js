@@ -85,7 +85,7 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
     if (!isToday) { 
       zoomOut()
     }
-    if (addr?.length > 2 ) {
+    else if (addr?.length > 2 ) {
       const splitAddr = addr.split(' ')
 
       const findSidoBbox = sidoBbox.filter(sido => sido.name === splitAddr[0])
@@ -117,13 +117,15 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
 
   //지도에 클릭한 시도로 줌 인 (시도 크기에 맞게)
   const onClick = (event) => {
-    setCurrentLocation(null)
-    const selectedSidoName = addr.split(' ')[0]
-    if (addr === '') {
-      changeAddr(event.features[0].properties.sidonm)
-      setSelectedSido(event.features[0].properties.sidonm)
-    } else if (selectedSidoName === event.features[0].properties.sidonm) {
-      changeAddr(event.features[0].properties.sgg_nm)
+    if (isToday) {
+      setCurrentLocation(null)
+      const selectedSidoName = addr.split(' ')[0]
+      if (addr === '') {
+        changeAddr(event.features[0].properties.sidonm)
+        setSelectedSido(event.features[0].properties.sidonm)
+      } else if (selectedSidoName === event.features[0].properties.sidonm) {
+        changeAddr(event.features[0].properties.sgg_nm)
+      }
     }
   }
 
