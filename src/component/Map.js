@@ -249,19 +249,24 @@ export function Map( {isPm, isToday, changeAddr, addr, SidoDB, SigunguDB, foreca
           </Marker>
         )}
       </ReactMapGL>
-      <Button
-        type="primary"
-        shape="circle"
-        icon={<ZoomOutOutlined/>}
-        onClick={zoomOut}
-      />
-      <Button
-        shape="circle"
-        size="large"
-        onClick={getLocation}
-      >
-        <Icon component={location} style={{fontSize:"1.5em"}} />
-      </Button>
+      <div className="map-icons">
+        <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          icon={<ZoomOutOutlined/>}
+          onClick={zoomOut}
+        />
+        <p style={{fontSize:"x-small"}}>zoom-out</p>
+        <Button
+          shape="circle"
+          size="large"
+          onClick={getLocation}
+        >
+          <Icon component={location} style={{fontSize:"1.5em"}} />
+        </Button>
+        <p style={{fontSize:"x-small"}}>현재 위치</p>
+      </div>
       <ColorLegend/>
     </div>
   );
