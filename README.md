@@ -5,7 +5,8 @@ Node.js, React로 개발한 미세먼지 수치 조회 웹 서비스입니다.
 더 자세한 정보는 [wiki](https://github.com/luneclaire/pm-map/wiki)를 참조하세요.
 
 ## Overview
-![2021-06-16 16_06_16-React App 외 페이지 2개 - 개인 - Microsoft​ Edge](https://user-images.githubusercontent.com/37368388/122173580-d48b3b00-cebc-11eb-879b-d8c8efe57c97.jpg)
+![2021-06-21 15_08_33-React App 외 페이지 7개 - 개인 - Microsoft​ Edge](https://user-images.githubusercontent.com/37368388/122714634-94540000-d2a2-11eb-9c41-828d431307e7.jpg)
+
 
 ## 구동 방법
 1. Clone repository
