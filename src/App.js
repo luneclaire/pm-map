@@ -46,7 +46,7 @@ function App() {
       const sigunguData = getSigunguData(SigunguDB, split[0], split[1])
       setPm(sigunguData[0])
       setFpm(sigunguData[1])
-      setDateTime(SigunguDB.dateTime)
+      setDateTime(sigunguData[2])
     }
   }
 

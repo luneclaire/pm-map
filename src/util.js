@@ -11,10 +11,11 @@ export function getSidoData(db, sidoName) { //시도별 미세먼지, 초미세�
 }
 
 export function getSigunguData(db, sidoName, sigunguName) {
-    let [pm, fpm] = [-1, -1]
+    let [pm, fpm, dateTime] = [-1, -1, '']
     const thisSido = db.find(sido => sido.sidoName === sidoName)
     
     if (thisSido !== undefined) {
+        dateTime = thisSido.dateTime
         const thisSigungu = thisSido.data.find(sigungu => sigungu.sigunguName === sigunguName)
         if (thisSigungu !== undefined) {
             pm = thisSigungu.pm
@@ -22,5 +23,5 @@ export function getSigunguData(db, sidoName, sigunguName) {
         }
     }
 
-    return [pm, fpm]
+    return [pm, fpm, dateTime]
 }
